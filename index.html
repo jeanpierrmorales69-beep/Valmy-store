@@ -43,18 +43,18 @@
             color: #f3f4f6;
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
             background-image: 
-                radial-gradient(circle at 10% 20%, rgba(77, 35, 104, 0.3) 0%, transparent 40%),
+                radial-gradient(circle at 10% 20%, rgba(77, 35, 104, 0.35) 0%, transparent 40%),
                 radial-gradient(circle at 90% 80%, rgba(255, 230, 0, 0.05) 0%, transparent 40%);
             background-attachment: fixed;
         }
 
         .glass-card {
-            background: rgba(25, 12, 38, 0.65);
+            background: rgba(25, 12, 38, 0.7);
             backdrop-filter: blur(16px);
             -webkit-backdrop-filter: blur(16px);
             border: 1px solid rgba(255, 255, 255, 0.08);
             border-top: 1px solid rgba(255, 255, 255, 0.15);
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4);
         }
 
         .glass-input {
@@ -77,12 +77,16 @@
             letter-spacing: 1px;
         }
 
-        .neon-border {
-            box-shadow: 0 0 12px rgba(255, 230, 0, 0.25);
-            border: 1px solid #FFE600;
+        /* Invoice Carta Sheet Format */
+        .invoice-letter-paper {
+            width: 100%;
+            max-width: 700px;
+            background: #12081d;
+            color: #f3f4f6;
+            border: 2px solid #4d2368;
+            box-shadow: 0 0 25px rgba(77, 35, 104, 0.5);
         }
 
-        /* Custom scrollbar */
         ::-webkit-scrollbar {
             width: 6px;
             height: 6px;
@@ -101,7 +105,7 @@
 </head>
 <body class="min-h-screen flex flex-col justify-between selection:bg-brand-neon selection:text-black">
 
-    <!-- LOGIN MODAL (MANDATORY ON STARTUP) -->
+    <!-- LOGIN MODAL (SECURE LOGIN - NO KEYS DISCLOSED) -->
     <div id="login-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/90 backdrop-blur-md">
         <div class="glass-card w-full max-w-md p-8 rounded-3xl border border-brand-neon/30 text-center relative overflow-hidden">
             <div class="absolute -top-10 -right-10 w-32 h-32 bg-brand-neon/10 rounded-full blur-2xl pointer-events-none"></div>
@@ -113,12 +117,12 @@
             </div>
 
             <h1 class="urban-graffiti-tag text-3xl mb-1">VALMY STORE</h1>
-            <p class="text-xs text-gray-400 mb-6 uppercase tracking-widest">Sistema de Control Financiero</p>
+            <p class="text-xs text-gray-400 mb-6 uppercase tracking-widest">Sistema de Control Financiero Seguro</p>
 
             <form id="login-form" onsubmit="handleLogin(event)" class="space-y-4 text-left">
                 <div>
                     <label class="block text-xs font-semibold text-gray-300 mb-1">USUARIO</label>
-                    <input type="text" id="login-username" required class="w-full px-4 py-3 rounded-xl glass-input text-sm" placeholder="Ingresa tu usuario (Ej: Andre)">
+                    <input type="text" id="login-username" required class="w-full px-4 py-3 rounded-xl glass-input text-sm" placeholder="Usuario registrado">
                 </div>
                 <div>
                     <label class="block text-xs font-semibold text-gray-300 mb-1">CONTRASEÑA</label>
@@ -131,11 +135,10 @@
                     <i class="fa-solid fa-right-to-bracket"></i> INGRESAR AL SISTEMA
                 </button>
             </form>
-            <p class="text-[10px] text-gray-500 mt-6 text-center">Acceso por defecto Administrador: <b>Andre</b> / <b>1234</b></p>
         </div>
     </div>
 
-    <!-- MAIN APP WRAPPER (HIDDEN UNTIL LOGIN) -->
+    <!-- MAIN APP WRAPPER -->
     <div id="app-container" class="hidden flex-1 flex flex-col">
         
         <!-- HEADER / NAVIGATION -->
@@ -187,7 +190,7 @@
                 <!-- User Profile / Logout -->
                 <div class="flex items-center gap-3">
                     <div class="text-right hidden sm:block">
-                        <div id="current-user-name" class="text-xs font-bold text-white">Andre</div>
+                        <div id="current-user-name" class="text-xs font-bold text-white">andres</div>
                         <div id="current-user-role" class="text-[10px] text-brand-neon font-semibold">Administrador</div>
                     </div>
                     <div class="w-9 h-9 bg-brand border border-white/20 rounded-full flex items-center justify-center text-sm font-bold shadow">
@@ -298,7 +301,7 @@
                     <div class="glass-card p-5 rounded-3xl">
                         <div class="flex items-center justify-between mb-4">
                             <h3 class="font-bold text-sm flex items-center gap-2 text-red-400">
-                                <i class="fa-solid fa-triangle-exclamation"></i> Clientes con Saldos Pendientes
+                                <i class="fa-solid fa-triangle-exclamation"></i> Clientes con Saldos Pendientes (Fiado)
                             </h3>
                             <button onclick="switchTab('clients')" class="text-xs text-brand-neon hover:underline">Ver Todos</button>
                         </div>
@@ -332,7 +335,7 @@
                         <div class="glass-card p-4 rounded-3xl flex flex-col sm:flex-row gap-3 items-center justify-between">
                             <div class="relative w-full sm:w-72">
                                 <i class="fa-solid fa-magnifying-glass absolute left-3 top-3 text-gray-400 text-xs"></i>
-                                <input type="text" id="pos-search" oninput="renderPosProducts()" placeholder="Buscar prenda o código..." class="w-full pl-9 pr-4 py-2 rounded-xl glass-input text-xs">
+                                <input type="text" id="pos-search" oninput="renderPosProducts()" placeholder="Buscar prenda..." class="w-full pl-9 pr-4 py-2 rounded-xl glass-input text-xs">
                             </div>
                             <div class="flex gap-2 overflow-x-auto w-full sm:w-auto" id="pos-category-filters">
                                 <!-- Dynamic category buttons -->
@@ -391,15 +394,15 @@
                                         <select id="pos-payment-method" class="w-full p-2 rounded-xl glass-input text-xs">
                                             <option value="Efectivo">Efectivo (Físico)</option>
                                             <option value="Virtual">Virtual (Nequi/Banco)</option>
-                                            <option value="Mixto">Mixto</option>
+                                            <option value="Fiado">Fiado / Crédito</option>
                                         </select>
                                     </div>
                                 </div>
 
                                 <!-- Abono / Partial Payment option -->
                                 <div>
-                                    <label class="block text-[11px] font-bold text-gray-300 mb-1">MONTO CANCELADO (ABONO)</label>
-                                    <input type="number" id="pos-paid-amount" placeholder="Dejar vacío para pago total" oninput="calculatePosTotals()" class="w-full p-2 rounded-xl glass-input text-xs">
+                                    <label class="block text-[11px] font-bold text-gray-300 mb-1">MONTO CANCELADO (ABONO EN EFECTIVO/VIRTUAL)</label>
+                                    <input type="number" id="pos-paid-amount" placeholder="Dejar en 0 si es fiado total" oninput="calculatePosTotals()" class="w-full p-2 rounded-xl glass-input text-xs">
                                 </div>
                             </div>
                         </div>
@@ -489,7 +492,7 @@
                                     <th class="p-4">Cliente</th>
                                     <th class="p-4">Total</th>
                                     <th class="p-4">Abonado</th>
-                                    <th class="p-4">Saldo</th>
+                                    <th class="p-4">Saldo Fiado</th>
                                     <th class="p-4">Estado</th>
                                     <th class="p-4 text-center">Acciones / Comprobante</th>
                                 </tr>
@@ -502,12 +505,12 @@
                 </div>
             </section>
 
-            <!-- TAB 5: CLIENTES (EDITABLE & DELETABLE) -->
+            <!-- TAB 5: CLIENTES & MODELO AIDA MARKETING -->
             <section id="tab-clients" class="tab-content hidden space-y-6">
                 <div class="flex flex-col sm:flex-row justify-between items-center gap-4">
                     <div>
-                        <h2 class="text-xl font-bold">Directorio de Clientes</h2>
-                        <p class="text-xs text-gray-400">Registro permanente, historial de compras y saldos adeudados</p>
+                        <h2 class="text-xl font-bold">Directorio de Clientes & Estrategia AIDA</h2>
+                        <p class="text-xs text-gray-400">Envío de ofertas basadas en el modelo AIDA para estrenar prendas</p>
                     </div>
                     <button onclick="openClientModal()" class="px-4 py-2 bg-brand-neon text-black text-xs font-bold rounded-xl hover:bg-yellow-300 transition-all flex items-center gap-2">
                         <i class="fa-solid fa-user-plus"></i> Registrar Cliente
@@ -524,8 +527,8 @@
                                     <th class="p-4">WhatsApp</th>
                                     <th class="p-4">Cédula</th>
                                     <th class="p-4">Dirección</th>
-                                    <th class="p-4">Deuda Actual</th>
-                                    <th class="p-4 text-center">Acciones</th>
+                                    <th class="p-4">Deuda Fiada</th>
+                                    <th class="p-4 text-center">Acciones & Oferta AIDA</th>
                                 </tr>
                             </thead>
                             <tbody id="clients-table-body" class="divide-y divide-white/5">
@@ -596,7 +599,7 @@
                 </div>
             </section>
 
-            <!-- TAB 8: ASISTENTE DE IA INTELIGENTE (CONTEXTUAL) -->
+            <!-- TAB 8: ASISTENTE DE IA INTELIGENTE (DINÁMICO & CONTEXTUAL) -->
             <section id="tab-ai-assistant" class="tab-content hidden space-y-4">
                 <div class="glass-card p-4 rounded-3xl flex items-center justify-between border border-brand-neon/30">
                     <div class="flex items-center gap-3">
@@ -605,11 +608,11 @@
                         </div>
                         <div>
                             <h3 class="font-bold text-sm">Asistente IA Valmy Store</h3>
-                            <p class="text-[11px] text-gray-400">Analiza las finanzas, ventas e inventario real del negocio en tiempo real</p>
+                            <p class="text-[11px] text-gray-400">Analiza inventarios, sugiere promociones e impulsa la meta semanal de $395.000 COP</p>
                         </div>
                     </div>
                     <span class="px-3 py-1 bg-green-500/20 text-green-400 text-[10px] font-bold rounded-full border border-green-500/30">
-                        ● ACTIVO EN CONTEXTO
+                        ● EN VIVO & CONTEXTUAL
                     </span>
                 </div>
 
@@ -619,14 +622,14 @@
                         <div class="flex gap-3 items-start">
                             <div class="w-7 h-7 bg-brand-dark rounded-full flex items-center justify-center text-xs text-brand-neon border border-brand-neon shrink-0">🐱</div>
                             <div class="glass-card p-3 rounded-2xl rounded-tl-none max-w-[85%] text-xs leading-relaxed">
-                                ¡Hola! Soy tu asistente de **Valmy Store**. Puedo responder preguntas sobre tus utilidades de la semana, prendas con poco stock, clientes con deudas pendientes o estrategias para alcanzar la meta de $395.000 COP. ¿En qué te ayudo hoy?
+                                ¡Hola! Soy tu asistente de **Valmy Store**. Analizo en tiempo real tu inventario y finanzas para ayudarte a tomar mejores decisiones. Pregúntame sobre promociones, deudas o el punto de equilibrio. 🔥
                             </div>
                         </div>
                     </div>
 
                     <!-- Chat Input -->
                     <form onsubmit="handleAiChatSubmit(event)" class="mt-3 flex gap-2">
-                        <input type="text" id="ai-chat-input" placeholder="Pregúntame algo sobre tu negocio..." class="flex-1 p-3 rounded-xl glass-input text-xs">
+                        <input type="text" id="ai-chat-input" placeholder="Escribe tu mensaje o pregunta..." class="flex-1 p-3 rounded-xl glass-input text-xs">
                         <button type="submit" class="px-5 bg-brand-neon text-black font-extrabold rounded-xl hover:bg-yellow-300 transition-all text-xs">
                             <i class="fa-solid fa-paper-plane"></i>
                         </button>
@@ -634,13 +637,13 @@
                 </div>
             </section>
 
-            <!-- TAB 9: AJUSTES DEL ADMINISTRADOR (SOLO ADMIN "ANDRE") -->
+            <!-- TAB 9: AJUSTES DEL ADMINISTRADOR (SOLO ADMIN "ANDRES") -->
             <section id="tab-settings" class="tab-content hidden space-y-6">
                 <div class="border-b border-white/10 pb-3">
                     <h2 class="text-xl font-bold flex items-center gap-2">
                         <i class="fa-solid fa-user-shield text-brand-neon"></i> Ajustes de Administrador
                     </h2>
-                    <p class="text-xs text-gray-400">Panel restringido para configuración de usuarios, categorías y parámetros del sistema</p>
+                    <p class="text-xs text-gray-400">Panel restringido para creación de usuarios con clave visible y categorías</p>
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -650,20 +653,20 @@
                         <h3 class="font-bold text-sm text-brand-neon uppercase">Crear y Gestionar Usuarios</h3>
                         <form onsubmit="handleCreateUser(event)" class="space-y-3">
                             <input type="text" id="new-user-name" required placeholder="Nombre de usuario" class="w-full p-2.5 rounded-xl glass-input text-xs">
-                            <input type="text" id="new-user-pass" required placeholder="Contraseña" class="w-full p-2.5 rounded-xl glass-input text-xs">
+                            <input type="text" id="new-user-pass" required placeholder="Contraseña de acceso" class="w-full p-2.5 rounded-xl glass-input text-xs">
                             <select id="new-user-role" class="w-full p-2.5 rounded-xl glass-input text-xs">
                                 <option value="Colaborador">Colaborador (Solo Ventas/Clientes)</option>
                                 <option value="Administrador">Administrador (Acceso Total)</option>
                             </select>
                             <button type="submit" class="w-full py-2.5 bg-brand-neon text-black font-bold rounded-xl text-xs hover:bg-yellow-300">
-                                + Crear Usuario
+                                + Registrar Usuario
                             </button>
                         </form>
 
                         <!-- Users List Table -->
                         <div class="pt-3 border-t border-white/10">
-                            <h4 class="text-xs font-bold text-gray-300 mb-2">Usuarios Registrados:</h4>
-                            <div id="settings-users-list" class="space-y-2 max-h-40 overflow-y-auto">
+                            <h4 class="text-xs font-bold text-gray-300 mb-2">Usuarios & Claves Registradas:</h4>
+                            <div id="settings-users-list" class="space-y-2 max-h-48 overflow-y-auto">
                                 <!-- Injected dynamically -->
                             </div>
                         </div>
@@ -697,7 +700,7 @@
     <div id="modal-capital" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
         <div class="glass-card w-full max-w-sm p-6 rounded-3xl space-y-4">
             <h3 class="font-bold text-base text-brand-neon">Editar Capital Base Inicial</h3>
-            <p class="text-xs text-gray-400">Este es el dinero patrimonial consolidado de la empresa (sin contar flujo de ventas).</p>
+            <p class="text-xs text-gray-400">Dinero patrimonial base consolidado de la empresa.</p>
             <div>
                 <label class="block text-xs text-gray-300 mb-1">Efectivo Físico Inicial ($)</label>
                 <input type="number" id="input-capital-cash" class="w-full p-2.5 rounded-xl glass-input text-xs">
@@ -785,55 +788,85 @@
         </div>
     </div>
 
-    <!-- MODAL 4: INVOICE RECEIPT VIEW & WHATSAPP GENERATOR -->
-    <div id="modal-receipt" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-black/90 backdrop-blur-md">
-        <div class="glass-card w-full max-w-sm p-6 rounded-3xl space-y-4 relative">
-            <button onclick="closeReceiptModal()" class="absolute top-4 right-4 text-gray-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
+    <!-- MODAL 4: LETTER SIZE ELEGANT INVOICE & FULL WHATSAPP RECEIPT -->
+    <div id="modal-receipt" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-black/90 backdrop-blur-md overflow-y-auto">
+        <div class="w-full max-w-2xl p-4 my-8 relative flex flex-col items-center">
+            <button onclick="closeReceiptModal()" class="absolute top-2 right-2 z-10 text-gray-400 hover:text-white p-2 text-xl"><i class="fa-solid fa-xmark"></i></button>
 
-            <!-- Printable Receipt Box -->
-            <div id="receipt-printable-area" class="bg-black p-5 rounded-2xl border border-brand-neon/40 text-left font-mono text-xs space-y-3">
-                <div class="text-center border-b border-dashed border-gray-700 pb-3">
-                    <div class="urban-graffiti-tag text-2xl text-brand-neon">VALMY STORE</div>
-                    <div class="text-[10px] text-gray-400">Ropa Urbana & Estilo</div>
-                    <div id="rec-date" class="text-[10px] text-gray-500 mt-1">Fecha: -</div>
-                    <div id="rec-id" class="text-[10px] text-brand-neon font-bold">FACTURA #: -</div>
-                </div>
-
-                <div class="space-y-1">
-                    <div><b>Cliente:</b> <span id="rec-client-name">-</span></div>
-                    <div><b>WhatsApp:</b> <span id="rec-client-phone">-</span></div>
-                </div>
-
-                <div class="border-t border-dashed border-gray-700 pt-2">
-                    <div class="font-bold mb-1">DETALLE DE PRENDAS:</div>
-                    <div id="rec-items-list" class="space-y-1 text-[11px]">
-                        <!-- Items list -->
+            <!-- Printable Letter-Sized Receipt Box -->
+            <div id="receipt-printable-area" class="invoice-letter-paper p-8 rounded-2xl font-sans text-xs space-y-6">
+                
+                <!-- Invoice Header -->
+                <div class="flex justify-between items-start border-b border-brand-neon/40 pb-4">
+                    <div>
+                        <div class="urban-graffiti-tag text-3xl text-brand-neon">VALMY STORE</div>
+                        <div class="text-[11px] text-gray-300">Ropa Urbana & Estilo Exclusivo</div>
+                        <div class="text-[10px] text-gray-400">Cali, Valle del Cauca - Colombia</div>
+                    </div>
+                    <div class="text-right">
+                        <span id="rec-debt-badge" class="px-3 py-1 bg-green-500/20 text-green-400 text-xs font-bold rounded-full border border-green-500/30">PAGADO TOTAL</span>
+                        <div id="rec-id" class="text-sm font-black text-brand-neon mt-2">FACTURA #: -</div>
+                        <div id="rec-date" class="text-[11px] text-gray-400">Fecha: -</div>
                     </div>
                 </div>
 
-                <div class="border-t border-dashed border-gray-700 pt-2 space-y-1">
-                    <div class="flex justify-between"><span>Subtotal:</span><span id="rec-subtotal">$0</span></div>
-                    <div class="flex justify-between text-red-400"><span>Descuento:</span><span id="rec-discount">-$0</span></div>
-                    <div class="flex justify-between text-sm font-bold text-brand-neon"><span>TOTAL:</span><span id="rec-total">$0</span></div>
-                    <div class="flex justify-between text-gray-400"><span>Abonado:</span><span id="rec-paid">$0</span></div>
-                    <div class="flex justify-between text-yellow-400 font-bold"><span>SALDO PENDIENTE:</span><span id="rec-debt">$0</span></div>
+                <!-- Customer Details -->
+                <div class="grid grid-cols-2 gap-4 bg-black/40 p-4 rounded-xl border border-white/5">
+                    <div>
+                        <div class="text-[10px] text-gray-400 uppercase font-bold">Datos del Cliente:</div>
+                        <div id="rec-client-name" class="font-bold text-white text-sm mt-0.5">-</div>
+                        <div id="rec-client-phone" class="text-brand-neon text-xs">-</div>
+                    </div>
+                    <div class="text-right">
+                        <div class="text-[10px] text-gray-400 uppercase font-bold">Método de Pago:</div>
+                        <div id="rec-payment-method" class="font-bold text-white text-xs mt-0.5">-</div>
+                    </div>
                 </div>
 
-                <div class="text-center pt-2 text-[9px] text-gray-500">
-                    ¡Gracias por elegir Valmy Store! 🐱🔥
+                <!-- Products Table -->
+                <div class="border border-white/10 rounded-xl overflow-hidden">
+                    <table class="w-full text-left text-xs">
+                        <thead class="bg-black/80 text-gray-400 uppercase tracking-wider border-b border-white/10">
+                            <tr>
+                                <th class="p-3">Prenda</th>
+                                <th class="p-3 text-center">Cant.</th>
+                                <th class="p-3 text-right">Precio Unit.</th>
+                                <th class="p-3 text-right">Total</th>
+                            </tr>
+                        </thead>
+                        <tbody id="rec-items-list" class="divide-y divide-white/5">
+                            <!-- Items list -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Totals & Debt Breakdown -->
+                <div class="flex justify-end">
+                    <div class="w-64 space-y-2 bg-black/40 p-4 rounded-xl border border-white/10">
+                        <div class="flex justify-between text-gray-300"><span>Subtotal:</span><span id="rec-subtotal">$0</span></div>
+                        <div class="flex justify-between text-red-400"><span>Descuento:</span><span id="rec-discount">-$0</span></div>
+                        <div class="flex justify-between text-base font-bold text-brand-neon border-t border-white/10 pt-2"><span>TOTAL:</span><span id="rec-total">$0</span></div>
+                        <div class="flex justify-between text-gray-300"><span>Monto Cancelado:</span><span id="rec-paid">$0</span></div>
+                        <div class="flex justify-between text-yellow-400 font-bold border-t border-dashed border-white/10 pt-1"><span>SALDO PENDIENTE:</span><span id="rec-debt">$0</span></div>
+                    </div>
+                </div>
+
+                <!-- Footer Note -->
+                <div class="text-center pt-4 border-t border-dashed border-white/10 text-[10px] text-gray-400">
+                    ¡Gracias por tu compra en Valmy Store! Conserva esta factura como comprobante oficial. 🐱🔥
                 </div>
             </div>
 
             <!-- Receipt Action Buttons -->
-            <div class="space-y-2 pt-2">
-                <button onclick="sendReceiptWhatsApp()" class="w-full py-2.5 bg-green-500 text-black font-extrabold rounded-xl hover:bg-green-400 text-xs flex items-center justify-center gap-2">
-                    <i class="fa-brands fa-whatsapp text-sm"></i> Enviar Factura Vertical por WhatsApp
+            <div class="w-full max-w-2xl space-y-2 pt-4">
+                <button onclick="sendReceiptWhatsApp()" class="w-full py-3 bg-green-500 text-black font-extrabold rounded-xl hover:bg-green-400 text-xs flex items-center justify-center gap-2 shadow-lg">
+                    <i class="fa-brands fa-whatsapp text-lg"></i> Enviar Factura Completa por WhatsApp
                 </button>
                 <div class="grid grid-cols-2 gap-2">
-                    <button onclick="downloadReceiptPDF()" class="py-2 bg-brand text-white font-bold rounded-xl hover:bg-brand-light text-xs flex items-center justify-center gap-1">
-                        <i class="fa-solid fa-file-pdf"></i> Descargar PDF
+                    <button onclick="downloadReceiptPDF()" class="py-2.5 bg-brand text-white font-bold rounded-xl hover:bg-brand-light text-xs flex items-center justify-center gap-1">
+                        <i class="fa-solid fa-file-pdf"></i> Descargar PDF Carta
                     </button>
-                    <button onclick="downloadReceiptImage()" class="py-2 bg-gray-700 text-white font-bold rounded-xl hover:bg-gray-600 text-xs flex items-center justify-center gap-1">
+                    <button onclick="downloadReceiptImage()" class="py-2.5 bg-gray-700 text-white font-bold rounded-xl hover:bg-gray-600 text-xs flex items-center justify-center gap-1">
                         <i class="fa-solid fa-image"></i> Descargar Imagen
                     </button>
                 </div>
@@ -844,11 +877,11 @@
     <!-- MAIN JAVASCRIPT LOGIC -->
     <script>
         // --- INITIAL STATE & LOCALSTORAGE DATABASE ---
-        const DB_KEY = 'VALMY_STORE_DATABASE_V2';
+        const DB_KEY = 'VALMY_STORE_DATABASE_V3';
 
         let db = JSON.parse(localStorage.getItem(DB_KEY)) || {
             users: [
-                { id: 1, name: 'Andre', pass: '1234', role: 'Administrador', avatar: '🐱' }
+                { id: 1, name: 'andres', pass: '1234', role: 'Administrador', avatar: '🐱' }
             ],
             categories: ['Gorras', 'Camisetas', 'Chaquetas', 'Pantalones', 'Accesorios'],
             capitalBase: { cash: 0, virtual: 0 },
@@ -873,7 +906,7 @@
             refreshUI();
         }
 
-        // --- AUTHENTICATION & LOGIN ---
+        // --- AUTHENTICATION & SECURE LOGIN ---
         function handleLogin(e) {
             e.preventDefault();
             const u = document.getElementById('login-username').value.trim();
@@ -961,9 +994,8 @@
             db.sales.forEach(s => {
                 if (s.paymentMethod === 'Efectivo') cashFlow += s.paid;
                 else if (s.paymentMethod === 'Virtual') virtFlow += s.paid;
-                else if (s.paymentMethod === 'Mixto') {
-                    cashFlow += (s.paid / 2);
-                    virtFlow += (s.paid / 2);
+                else if (s.paymentMethod === 'Fiado') {
+                    cashFlow += s.paid; // Abonos iniciales
                 }
                 pendingDebts += s.debt;
                 weeklyNetProfit += s.netProfit;
@@ -996,7 +1028,7 @@
                             </div>
                             <div class="text-right">
                                 <div class="font-bold text-red-400">$${d.debt.toLocaleString()}</div>
-                                <button onclick="openReceiptModal(${d.id})" class="text-[10px] text-brand-neon underline">Cobrar</button>
+                                <button onclick="openReceiptModal(${d.id})" class="text-[10px] text-brand-neon underline">Ver Comprobante</button>
                             </div>
                         </div>
                     `;
@@ -1040,7 +1072,7 @@
             saveDB();
         }
 
-        // --- INVENTORY MANAGEMENT (FIXED EDIT & DELETE) ---
+        // --- INVENTORY MANAGEMENT ---
         function renderInventoryTable() {
             const tbody = document.getElementById('inventory-table-body');
             tbody.innerHTML = '';
@@ -1213,8 +1245,16 @@
             const discount = parseFloat(document.getElementById('pos-discount').value) || 0;
             const total = Math.max(0, subtotal - discount);
 
+            const method = document.getElementById('pos-payment-method').value;
             const paidInput = document.getElementById('pos-paid-amount').value;
-            const paid = paidInput === '' ? total : parseFloat(paidInput) || 0;
+            
+            let paid = 0;
+            if (method === 'Fiado') {
+                paid = paidInput === '' ? 0 : parseFloat(paidInput) || 0;
+            } else {
+                paid = paidInput === '' ? total : parseFloat(paidInput) || 0;
+            }
+
             const debt = Math.max(0, total - paid);
 
             document.getElementById('pos-subtotal').innerText = `$${subtotal.toLocaleString()}`;
@@ -1252,7 +1292,6 @@
                 custName = document.getElementById('pos-cust-name').value.trim() || 'Cliente Ocasional';
                 custPhone = document.getElementById('pos-cust-phone').value.trim() || '573000000000';
                 
-                // Save new client automatically
                 if (custName !== 'Cliente Ocasional') {
                     db.clients.push({ id: Date.now(), name: custName, phone: custPhone, doc: '', address: '' });
                 }
@@ -1271,13 +1310,19 @@
 
             const discount = parseFloat(document.getElementById('pos-discount').value) || 0;
             const total = Math.max(0, subtotal - discount);
-            const paidInput = document.getElementById('pos-paid-amount').value;
-            const paid = paidInput === '' ? total : parseFloat(paidInput) || 0;
-            const debt = Math.max(0, total - paid);
             const paymentMethod = document.getElementById('pos-payment-method').value;
-            const saleDate = document.getElementById('pos-sale-date').value || new Date().toISOString().split('T')[0];
+            const paidInput = document.getElementById('pos-paid-amount').value;
 
-            const netProfit = total - totalCost; // Net profit calculation for Weekly Break Even
+            let paid = 0;
+            if (paymentMethod === 'Fiado') {
+                paid = paidInput === '' ? 0 : parseFloat(paidInput) || 0;
+            } else {
+                paid = paidInput === '' ? total : parseFloat(paidInput) || 0;
+            }
+
+            const debt = Math.max(0, total - paid);
+            const saleDate = document.getElementById('pos-sale-date').value || new Date().toISOString().split('T')[0];
+            const netProfit = total - totalCost;
 
             const newSale = {
                 id: Math.floor(1000 + Math.random() * 9000),
@@ -1304,11 +1349,10 @@
             clearPosCart();
             saveDB();
 
-            // Open Receipt Modal
             openReceiptModal(newSale.id);
         }
 
-        // --- RECEIPT & VERTICAL WHATSAPP MESSAGE ---
+        // --- RECEIPT & FULL UNBROKEN WHATSAPP MESSAGE ---
         function openReceiptModal(saleId) {
             const s = db.sales.find(x => x.id === saleId);
             if (!s) return;
@@ -1319,15 +1363,27 @@
             document.getElementById('rec-date').innerText = `Fecha: ${s.date}`;
             document.getElementById('rec-client-name').innerText = s.customerName;
             document.getElementById('rec-client-phone').innerText = s.customerPhone;
+            document.getElementById('rec-payment-method').innerText = s.paymentMethod;
+
+            const badge = document.getElementById('rec-debt-badge');
+            if (s.debt > 0) {
+                badge.innerText = 'SALDO PENDIENTE (FIADO)';
+                badge.className = 'px-3 py-1 bg-red-500/20 text-red-400 text-xs font-bold rounded-full border border-red-500/30';
+            } else {
+                badge.innerText = 'PAGADO TOTAL';
+                badge.className = 'px-3 py-1 bg-green-500/20 text-green-400 text-xs font-bold rounded-full border border-green-500/30';
+            }
 
             const itemsDiv = document.getElementById('rec-items-list');
             itemsDiv.innerHTML = '';
             s.items.forEach(i => {
                 itemsDiv.innerHTML += `
-                    <div class="flex justify-between">
-                        <span>${i.qty}x ${i.name}</span>
-                        <span>$${(i.price * i.qty).toLocaleString()}</span>
-                    </div>
+                    <tr class="hover:bg-white/5">
+                        <td class="p-3 font-bold text-white">${i.name}</td>
+                        <td class="p-3 text-center">${i.qty}</td>
+                        <td class="p-3 text-right text-gray-300">$${i.price.toLocaleString()}</td>
+                        <td class="p-3 text-right font-bold text-white">$${(i.price * i.qty).toLocaleString()}</td>
+                    </tr>
                 `;
             });
 
@@ -1348,38 +1404,47 @@
             if (!currentReceiptSale) return;
             const s = currentReceiptSale;
 
-            // Structured vertical text for WhatsApp
-            let msg = `*VALMY STORE - COMPROBANTE DE COMPRA* 🐱🔥%0A`;
-            msg += `-----------------------------------%0A`;
-            msg += `*Factura #:* VALMY-${s.id}%0A`;
-            msg += `*Fecha:* ${s.date}%0A`;
-            msg += `*Cliente:* ${s.customerName}%0A`;
-            msg += `-----------------------------------%0A`;
-            msg += `*PRENDAS COMPRADAS:*%0A`;
+            let text = `*VALMY STORE - COMPROBANTE DE COMPRA* 🐱🔥\n`;
+            text += `-----------------------------------\n`;
+            text += `*Factura #:* VALMY-${s.id}\n`;
+            text += `*Fecha:* ${s.date}\n`;
+            text += `*Cliente:* ${s.customerName}\n`;
+            text += `*Método:* ${s.paymentMethod}\n`;
+            text += `-----------------------------------\n`;
+            text += `*PRENDAS COMPRADAS:*\n`;
 
             s.items.forEach(i => {
-                msg += `• ${i.qty}x ${i.name} - $${(i.price * i.qty).toLocaleString()}%0A`;
+                text += `• ${i.qty}x ${i.name} - $${(i.price * i.qty).toLocaleString()}\n`;
             });
 
-            msg += `-----------------------------------%0A`;
-            msg += `*Subtotal:* $${s.subtotal.toLocaleString()}%0A`;
-            if (s.discount > 0) msg += `*Descuento:* -$${s.discount.toLocaleString()}%0A`;
-            msg += `*TOTAL VENTA:* $${s.total.toLocaleString()}%0A`;
-            msg += `*Monto Cancelado:* $${s.paid.toLocaleString()}%0A`;
-            if (s.debt > 0) msg += `*SALDO PENDIENTE (FIADO):* $${s.debt.toLocaleString()}%0A`;
-            else msg += `*ESTADO:* PAGADO TOTALMENTE ✅%0A`;
-            msg += `-----------------------------------%0A`;
-            msg += `¡Gracias por preferir Valmy Store! 🔥`;
+            text += `-----------------------------------\n`;
+            text += `*Subtotal:* $${s.subtotal.toLocaleString()}\n`;
+            if (s.discount > 0) text += `*Descuento:* -$${s.discount.toLocaleString()}\n`;
+            text += `*TOTAL VENTA:* $${s.total.toLocaleString()}\n`;
+            text += `*Monto Cancelado:* $${s.paid.toLocaleString()}\n`;
+            
+            if (s.debt > 0) {
+                text += `*SALDO PENDIENTE (FIADO):* $${s.debt.toLocaleString()} ⚠️\n`;
+            } else {
+                text += `*ESTADO:* PAGADO TOTALMENTE ✅\n`;
+            }
+            text += `-----------------------------------\n`;
+            text += `¡Gracias por elegir Valmy Store! 🔥`;
 
-            const url = `https://wa.me/${s.customerPhone.replace(/[^0-9]/g, '')}?text=${msg}`;
-            window.open(url, '_blank');
+            const cleanPhone = s.customerPhone.replace(/[^0-9]/g, '');
+            const encodedText = encodeURIComponent(text);
+            window.open(`https://wa.me/${cleanPhone}?text=${encodedText}`, '_blank');
         }
 
         function downloadReceiptPDF() {
             const { jsPDF } = window.jspdf;
-            const doc = new jsPDF();
-            doc.text(document.getElementById('receipt-printable-area').innerText, 10, 10);
-            doc.save(`Factura-Valmy-${currentReceiptSale.id}.pdf`);
+            const doc = new jsPDF({ format: 'letter', unit: 'pt' });
+            
+            html2canvas(document.getElementById('receipt-printable-area')).then(canvas => {
+                const imgData = canvas.toDataURL('image/png');
+                doc.addImage(imgData, 'PNG', 40, 40, 530, 0);
+                doc.save(`Factura-Valmy-${currentReceiptSale.id}.pdf`);
+            });
         }
 
         function downloadReceiptImage() {
@@ -1391,13 +1456,12 @@
             });
         }
 
-        // --- CLIENTS TABLE (EDITABLE & DELETABLE) ---
+        // --- CLIENTS TABLE & AIDA MARKETING MODEL ---
         function renderClientsTable() {
             const tbody = document.getElementById('clients-table-body');
             tbody.innerHTML = '';
 
             db.clients.forEach(c => {
-                // Calculate debt per client
                 const totalDebt = db.sales.filter(s => s.customerPhone === c.phone).reduce((acc, curr) => acc + curr.debt, 0);
 
                 tbody.innerHTML += `
@@ -1408,12 +1472,25 @@
                         <td class="p-4 text-gray-300">${c.address || '-'}</td>
                         <td class="p-4 font-bold ${totalDebt > 0 ? 'text-red-400' : 'text-green-400'}">$${totalDebt.toLocaleString()}</td>
                         <td class="p-4 text-center space-x-2">
-                            <button onclick="editClient(${c.id})" class="p-1.5 text-blue-400 hover:text-white" title="Editar Cliente"><i class="fa-solid fa-pen"></i></button>
-                            <button onclick="deleteClient(${c.id})" class="p-1.5 text-red-400 hover:text-white" title="Borrar Cliente"><i class="fa-solid fa-trash"></i></button>
+                            <button onclick="sendAidaOffer('${c.name}', '${c.phone}')" class="px-2.5 py-1 bg-brand-neon text-black font-extrabold rounded-lg text-[10px] hover:bg-yellow-300" title="Enviar Oferta AIDA"><i class="fa-solid fa-wand-magic-sparkles"></i> Oferta AIDA</button>
+                            <button onclick="editClient(${c.id})" class="p-1.5 text-blue-400 hover:text-white"><i class="fa-solid fa-pen"></i></button>
+                            <button onclick="deleteClient(${c.id})" class="p-1.5 text-red-400 hover:text-white"><i class="fa-solid fa-trash"></i></button>
                         </td>
                     </tr>
                 `;
             });
+        }
+
+        function sendAidaOffer(name, phone) {
+            const topProd = db.products[0] ? db.products[0].name : 'Nuestra nueva colección';
+            let aidaMsg = `*¡Hola ${name}!* 👋🐱\n\n`;
+            aidaMsg += `🔥 *ATENCIÓN:* ¡Llegó la nueva colección urbana a Valmy Store!\n\n`;
+            aidaMsg += `✨ *INTERÉS:* Diseños exclusivos oversize y gorras ajustables que están marcando tendencia este mes.\n\n`;
+            aidaMsg += `😍 *DESEO:* ¿Qué tal si te armas el outfit perfecto con la prenda *${topProd}* y te llevas un descuento especial por ser cliente VIP?\n\n`;
+            aidaMsg += `🚀 *ACCIÓN:* Escríbeme ahora mismo para separarte tu talla antes de que se agoten. ¡Luce el mejor estilo urbano! 🔥`;
+
+            const cleanPhone = phone.replace(/[^0-9]/g, '');
+            window.open(`https://wa.me/${cleanPhone}?text=${encodeURIComponent(aidaMsg)}`, '_blank');
         }
 
         function openClientModal(clientId = null) {
@@ -1490,12 +1567,12 @@
                         <td class="p-4 font-bold ${s.debt > 0 ? 'text-red-400' : 'text-gray-400'}">$${s.debt.toLocaleString()}</td>
                         <td class="p-4">
                             <span class="px-2 py-1 text-[10px] font-bold rounded-full ${s.debt > 0 ? 'bg-red-500/20 text-red-400' : 'bg-green-500/20 text-green-400'}">
-                                ${s.debt > 0 ? 'PENDIENTE' : 'PAGADO'}
+                                ${s.debt > 0 ? 'FIADO' : 'PAGADO'}
                             </span>
                         </td>
                         <td class="p-4 text-center space-x-2">
                             <button onclick="openReceiptModal(${s.id})" class="p-1.5 text-brand-neon hover:underline"><i class="fa-solid fa-receipt"></i> Factura</button>
-                            <button onclick="deleteSale(${s.id})" class="p-1.5 text-red-400 hover:text-white" title="Eliminar Venta"><i class="fa-solid fa-trash"></i></button>
+                            <button onclick="deleteSale(${s.id})" class="p-1.5 text-red-400 hover:text-white"><i class="fa-solid fa-trash"></i></button>
                         </td>
                     </tr>
                 `;
@@ -1576,7 +1653,7 @@
             saveDB();
         }
 
-        // --- AI ASSISTANT CHAT ---
+        // --- DYNAMIC & CONTEXTUAL AI ASSISTANT CHAT ---
         function handleAiChatSubmit(e) {
             e.preventDefault();
             const input = document.getElementById('ai-chat-input');
@@ -1596,17 +1673,32 @@
 
             input.value = '';
 
-            // AI Contextual Response Calculation
-            let reply = "Analizando el estado del negocio... ";
-            const totalSales = db.sales.reduce((acc, curr) => acc + curr.total, 0);
-            const weeklyProfit = db.sales.reduce((acc, curr) => acc + curr.netProfit, 0);
+            // AI Contextual Analysis
+            const q = query.toLowerCase();
+            let greeting = "¡Hola! ";
+            if (q.includes('hola') || q.includes('buenas')) {
+                greeting = `¡Hola, ${currentUser ? currentUser.name : 'parce'}! ¿Cómo va todo en el negocio hoy? 🐱🔥 `;
+            }
 
-            if (query.toLowerCase().includes('meta') || query.toLowerCase().includes('equilibrio')) {
-                reply = `Tu utilidad acumulada esta semana es **$${weeklyProfit.toLocaleString()} COP**. Para alcanzar la meta de **$395.000 COP**, te faltan **$${Math.max(0, 395000 - weeklyProfit).toLocaleString()} COP**.`;
-            } else if (query.toLowerCase().includes('inventario') || query.toLowerCase().includes('stock')) {
-                reply = `Tienes **${db.products.length}** prendas registradas en inventario. Hay ${db.products.filter(p => p.stock <= 3).length} prendas con bajo stock.`;
+            let response = greeting;
+            const weeklyProfit = db.sales.reduce((acc, curr) => acc + curr.netProfit, 0);
+            const lowStockItems = db.products.filter(p => p.stock <= 3);
+
+            if (q.includes('inventario') || q.includes('promoción') || q.includes('promocion') || q.includes('descuento')) {
+                if (lowStockItems.length > 0) {
+                    response += `Estuve revisando tu inventario. Las siguientes prendas tienen **bajo stock**: **${lowStockItems.map(p => p.name).join(', ')}**. Te sugiero no darles descuento para proteger el margen. Sin embargo, para impulsar tus ventas, podrías armar una **combo oferta** con prendas de mayor stock.`;
+                } else {
+                    response += `Tu inventario se encuentra bastante saludable. Podríamos lanzar una promoción del 10% de descuento en prendas seleccionadas para acelerar el cumplimiento de la meta semanal.`;
+                }
+            } else if (q.includes('meta') || q.includes('equilibrio') || q.includes('ganancia')) {
+                response += `Llevas un acumulado de **$${weeklyProfit.toLocaleString()} COP** en utilidad limpia esta semana. Recuerda que tu meta fija es de **$395.000 COP**. `;
+                if (weeklyProfit < 395000) {
+                    response += `Faltan **$${(395000 - weeklyProfit).toLocaleString()} COP** para alcanzar el punto de equilibrio. ¡Recomiendo ofrecer prendas por WhatsApp a clientes recurrentes!`;
+                } else {
+                    response += `¡Excelente trabajo! Has superado el punto de equilibrio semanal. 🎉`;
+                }
             } else {
-                reply = `Actualmente llevas **$${totalSales.toLocaleString()} COP** en ventas totales con una utilidad neta de **$${weeklyProfit.toLocaleString()} COP**. ¡Sigue impulsando las ventas urbanas! 🔥`;
+                response += `Entiendo lo que me comentas. En este momento tienes **${db.products.length} prendas** en catálogo y una cartera con **$${db.sales.reduce((acc, curr) => acc + curr.debt, 0).toLocaleString()} COP** pendientes por cobrar. ¿Deseas que te ayude a crear una promoción o enviar un mensaje AIDA?`;
             }
 
             setTimeout(() => {
@@ -1614,26 +1706,29 @@
                     <div class="flex gap-3 items-start">
                         <div class="w-7 h-7 bg-brand-dark rounded-full flex items-center justify-center text-xs text-brand-neon border border-brand-neon shrink-0">🐱</div>
                         <div class="glass-card p-3 rounded-2xl rounded-tl-none max-w-[85%] text-xs leading-relaxed">
-                            ${reply}
+                            ${response}
                         </div>
                     </div>
                 `;
                 chatDiv.scrollTop = chatDiv.scrollHeight;
-            }, 400);
+            }, 300);
         }
 
-        // --- SETTINGS MANAGEMENT ---
+        // --- SETTINGS MANAGEMENT (USERS WITH VISIBLE PASSWORDS) ---
         function renderSettings() {
             const usersDiv = document.getElementById('settings-users-list');
             usersDiv.innerHTML = '';
             db.users.forEach(u => {
                 usersDiv.innerHTML += `
-                    <div class="flex justify-between items-center p-2 rounded-xl bg-black/40 text-xs">
+                    <div class="flex justify-between items-center p-2.5 rounded-xl bg-black/40 text-xs border border-white/5">
                         <div>
                             <span class="font-bold text-white">${u.name}</span>
                             <span class="text-[10px] text-brand-neon ml-2">(${u.role})</span>
                         </div>
-                        <span class="text-gray-400 font-mono text-[10px]">Clave: ${u.pass}</span>
+                        <div class="flex items-center gap-2">
+                            <span class="text-gray-300 font-mono text-[11px] bg-black/60 px-2 py-0.5 rounded border border-white/10">Clave: ${u.pass}</span>
+                            <button onclick="deleteUser(${u.id})" class="text-red-400 hover:text-white" title="Eliminar Usuario"><i class="fa-solid fa-trash"></i></button>
+                        </div>
                     </div>
                 `;
             });
@@ -1664,6 +1759,14 @@
             saveDB();
         }
 
+        function deleteUser(id) {
+            if (db.users.length <= 1) return alert('No puedes eliminar el único usuario del sistema.');
+            if (confirm('¿Eliminar este usuario?')) {
+                db.users = db.users.filter(u => u.id !== id);
+                saveDB();
+            }
+        }
+
         function handleAddCategory(e) {
             e.preventDefault();
             const cat = document.getElementById('new-category-name').value.trim();
@@ -1678,11 +1781,6 @@
             db.categories = db.categories.filter(c => c !== cat);
             saveDB();
         }
-
-        // INITIAL LAUNCH
-        window.onload = function() {
-            // Keep mandatory login active
-        };
     </script>
 </body>
 </html>
