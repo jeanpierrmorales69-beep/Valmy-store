@@ -690,7 +690,7 @@
         </div>
     </div>
 
-    <!-- MODAL FLUJO DE CAJA INGRESO/EGRESO (CON EDICIÓN) -->
+    <!-- MODAL FLUJO DE CAJA INGRESO/EGRESO -->
     <div id="modal-cashflow-mov" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
         <div class="glass-card w-full max-w-md p-6 rounded-3xl space-y-4">
             <h3 id="cf-modal-title" class="font-bold text-base text-brand-neon">Movimiento de Caja</h3>
@@ -900,23 +900,34 @@
         </div>
     </div>
 
-    <!-- MAIN JAVASCRIPT LOGIC -->
-    <script>
-        const DB_KEY = 'VALMY_STORE_DATABASE_V9';
+    <!-- FIREBASE SDKs (Compatibles con Firestore en la Nube) -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 
-        let db = JSON.parse(localStorage.getItem(DB_KEY)) || {
+    <!-- MAIN JAVASCRIPT LOGIC CON FIREBASE -->
+    <script>
+        // Configuración oficial de Firebase para Valmy Store
+        const firebaseConfig = {
+            apiKey: "AIzaSyCMr4tb741oYtdH9HkVf6q4TocqeXFNqc0",
+            authDomain: "valmy-stores.firebaseapp.com",
+            projectId: "valmy-stores",
+            storageBucket: "valmy-stores.firebasestorage.app",
+            messagingSenderId: "103810557744",
+            appId: "1:103810557744:web:e12f79ca5795d858ab8af5"
+        };
+
+        // Inicializar Firebase
+        firebase.initializeApp(firebaseConfig);
+        const dbCloud = firebase.firestore();
+
+        let db = {
             users: [
                 { id: 1, name: 'andres', pass: '1234', role: 'Administrador', avatar: '🐱' }
             ],
             categories: ['Gorras', 'Camisetas', 'Chaquetas', 'Pantalones', 'Accesorios'],
             capitalBase: { cash: 0, virtual: 0 },
-            products: [
-                { id: 101, name: 'Gorra Urbana Valmy Snapback', category: 'Gorras', cost: 25000, price: 45000, stock: 12 },
-                { id: 102, name: 'Camiseta Oversize Heavy Cotton', category: 'Camisetas', cost: 35000, price: 65000, stock: 8 }
-            ],
-            clients: [
-                { id: 201, name: 'Carlos Pérez', phone: '573001234567', doc: '10987654', address: 'Cali, Valle' }
-            ],
+            products: [],
+            clients: [],
             sales: [],
             orders: [],
             cashFlowLog: []
@@ -926,9 +937,37 @@
         let posCart = [];
         let currentReceiptSale = null;
 
+        // Cargar datos en tiempo real desde Firestore
+        function initFirebaseSync() {
+            dbCloud.collection('valmy_store').doc('main_data').onSnapshot((doc) => {
+                if (doc.exists) {
+                    const data = doc.data();
+                    db.users = data.users || db.users;
+                    db.categories = data.categories || db.categories;
+                    db.capitalBase = data.capitalBase || db.capitalBase;
+                    db.products = data.products || [];
+                    db.clients = data.clients || [];
+                    db.sales = data.sales || [];
+                    db.orders = data.orders || [];
+                    db.cashFlowLog = data.cashFlowLog || [];
+                    refreshUI();
+                } else {
+                    // Si está vacío por primera vez, guardar datos iniciales
+                    saveDB();
+                }
+            }, (error) => {
+                console.error("Error sincronizando con Firebase:", error);
+            });
+        }
+
         function saveDB() {
-            localStorage.setItem(DB_KEY, JSON.stringify(db));
-            refreshUI();
+            dbCloud.collection('valmy_store').doc('main_data').set(db)
+                .then(() => {
+                    console.log("Datos guardados en Firebase exitosamente.");
+                })
+                .catch((error) => {
+                    console.error("Error al guardar en Firebase: ", error);
+                });
         }
 
         function calculateDaysElapsed(dateStr) {
@@ -1029,24 +1068,21 @@
             let cashFlow = baseCash;
             let virtFlow = baseVirt;
             let pendingDebts = 0;
-            let weeklyRealProfit = 0; // Utilidad cobrada (sin contar fiado no pagado)
+            let weeklyRealProfit = 0;
 
             db.sales.forEach(s => {
                 pendingDebts += s.debt;
                 
-                // Distribución de lo pagado en cuentas
                 if (s.paymentMethod === 'Efectivo') cashFlow += s.paid;
                 else if (s.paymentMethod === 'Virtual') virtFlow += s.paid;
                 else if (s.paymentMethod === 'Fiado') cashFlow += s.paid;
 
-                // Meta semanal basada proporcionalmente solo en lo pagado
                 if (s.total > 0) {
                     const proportionPaid = s.paid / s.total;
                     weeklyRealProfit += (s.netProfit * proportionPaid);
                 }
             });
 
-            // Ajustar con movimientos adicionales de flujo de caja
             db.cashFlowLog.forEach(m => {
                 if (m.type === 'Ingreso') {
                     if (m.account === 'Efectivo') cashFlow += m.amount;
@@ -1157,7 +1193,6 @@
 
             let combined = [];
 
-            // Añadir ventas
             db.sales.forEach(s => {
                 if (s.paid > 0) {
                     combined.push({
@@ -1172,7 +1207,6 @@
                 }
             });
 
-            // Añadir movimientos de caja
             db.cashFlowLog.forEach(m => {
                 combined.push({
                     id: m.id,
@@ -2136,6 +2170,11 @@
             db.categories = db.categories.filter(c => c !== cat);
             saveDB();
         }
+
+        // Iniciar la sincronización con Firebase al cargar la página
+        window.onload = function() {
+            initFirebaseSync();
+        };
     </script>
 </body>
 </html>
