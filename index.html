@@ -161,6 +161,9 @@
                     <button onclick="switchTab('pos')" id="nav-pos" class="nav-btn px-3 py-2 rounded-xl text-xs font-bold text-gray-400 hover:text-white transition-all">
                         <i class="fa-solid fa-cash-register mr-1"></i> Vender
                     </button>
+                    <button onclick="switchTab('cashflow')" id="nav-cashflow" class="nav-btn admin-only px-3 py-2 rounded-xl text-xs font-bold text-gray-400 hover:text-white transition-all">
+                        <i class="fa-solid fa-vault mr-1 text-brand-neon"></i> Flujo de Caja
+                    </button>
                     <button onclick="switchTab('inventory')" id="nav-inventory" class="nav-btn admin-only px-3 py-2 rounded-xl text-xs font-bold text-gray-400 hover:text-white transition-all">
                         <i class="fa-solid fa-boxes-stacked mr-1"></i> Inventario
                     </button>
@@ -202,6 +205,7 @@
             <div class="md:hidden mt-3 pt-2 border-t border-white/10 flex overflow-x-auto gap-2 pb-1 text-xs">
                 <button onclick="switchTab('dashboard')" class="admin-only px-3 py-2 rounded-xl font-bold bg-brand text-white whitespace-nowrap">Dashboard</button>
                 <button onclick="switchTab('pos')" class="px-3 py-2 rounded-xl font-bold bg-black/40 text-gray-300 whitespace-nowrap">Vender (POS)</button>
+                <button onclick="switchTab('cashflow')" class="admin-only px-3 py-2 rounded-xl font-bold bg-black/40 text-gray-300 whitespace-nowrap">Flujo de Caja</button>
                 <button onclick="switchTab('inventory')" class="admin-only px-3 py-2 rounded-xl font-bold bg-black/40 text-gray-300 whitespace-nowrap">Inventario</button>
                 <button onclick="switchTab('sales-log')" class="admin-only px-3 py-2 rounded-xl font-bold bg-black/40 text-gray-300 whitespace-nowrap">Historial</button>
                 <button onclick="switchTab('clients')" class="admin-only px-3 py-2 rounded-xl font-bold bg-black/40 text-gray-300 whitespace-nowrap">Clientes</button>
@@ -260,16 +264,16 @@
                     </div>
                 </div>
 
-                <!-- Punto de Equilibrio Semanal -->
+                <!-- Punto de Equilibrio Semanal (Excluye ventas puramente fiadas hasta que se abonen) -->
                 <div class="glass-card p-5 sm:p-6 rounded-3xl border border-brand-neon/40 relative overflow-hidden space-y-4">
                     <div class="flex flex-col md:flex-row md:items-center justify-between gap-3">
                         <div>
                             <span class="px-3 py-1 bg-brand-neon text-black text-[10px] sm:text-xs font-black rounded-full uppercase">⚡ META CALLEJERA</span>
                             <h2 id="weekly-motive-title" class="text-lg sm:text-xl font-bold mt-2 text-white">¡Qué más Valmy! Te faltan tanto, ¡ánimo! 🔥</h2>
-                            <p id="weekly-motive-subtitle" class="text-xs text-gray-300 font-medium">Meta fija de utilidad limpia: <b>$395.000 COP</b></p>
+                            <p id="weekly-motive-subtitle" class="text-xs text-gray-300 font-medium">Meta fija de utilidad limpia cobrada: <b>$395.000 COP</b></p>
                         </div>
                         <div class="text-left sm:text-right">
-                            <div class="text-[10px] text-gray-400 uppercase font-bold">Utilidad Limpia Semanal</div>
+                            <div class="text-[10px] text-gray-400 uppercase font-bold">Utilidad Real Cobrada</div>
                             <div id="weekly-profit-current" class="text-2xl sm:text-3xl font-black text-brand-neon">$0</div>
                         </div>
                     </div>
@@ -309,7 +313,7 @@
 
             </section>
 
-            <!-- TAB 2: PUNTO DE VENTA (POS - ACCESIBLE POR TODOS) -->
+            <!-- TAB 2: PUNTO DE VENTA (POS) -->
             <section id="tab-pos" class="tab-content hidden space-y-6">
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                     <div class="lg:col-span-2 space-y-4">
@@ -389,10 +393,57 @@
                 </div>
             </section>
 
-            <!-- TAB 3: INVENTARIO (CON VALORIZACIÓN FINANCIERA TOTAL) -->
+            <!-- TAB 2.5: FLUJO DE CAJA (NUEVA SECCIÓN) -->
+            <section id="tab-cashflow" class="tab-content hidden space-y-6">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+                    <div>
+                        <h2 class="text-lg sm:text-xl font-bold flex items-center gap-2"><i class="fa-solid fa-vault text-brand-neon"></i> Control de Flujo de Caja</h2>
+                        <p class="text-xs text-gray-400">Dinero disponible real para mover en Efectivo y Virtual</p>
+                    </div>
+                    <div class="flex gap-2 w-full sm:w-auto">
+                        <button onclick="openCashFlowModal('Ingreso')" class="flex-1 sm:flex-none px-4 py-2.5 bg-green-600 text-white text-xs font-bold rounded-xl hover:bg-green-500 flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-plus-circle"></i> Ingresar Dinero
+                        </button>
+                        <button onclick="openCashFlowModal('Egreso')" class="flex-1 sm:flex-none px-4 py-2.5 bg-red-600 text-white text-xs font-bold rounded-xl hover:bg-red-500 flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-minus-circle"></i> Retirar / Gastar
+                        </button>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div class="glass-card p-5 rounded-3xl border-l-4 border-l-green-400 space-y-2">
+                        <span class="text-xs font-bold uppercase tracking-wider text-gray-400">Dinero Disponible en Efectivo (Caja Física)</span>
+                        <div id="cf-total-cash" class="text-3xl font-black text-green-400">$0</div>
+                        <p class="text-[10px] text-gray-400">Suma de capital base en efectivo + ventas en efectivo + ingresos directos - egresos en efectivo.</p>
+                    </div>
+                    <div class="glass-card p-5 rounded-3xl border-l-4 border-l-cyan-400 space-y-2">
+                        <span class="text-xs font-bold uppercase tracking-wider text-gray-400">Dinero Disponible Virtual (Nequi / Bancos)</span>
+                        <div id="cf-total-virtual" class="text-3xl font-black text-cyan-400">$0</div>
+                        <p class="text-[10px] text-gray-400">Suma de capital base virtual + pagos virtuales / transferencias + ingresos virtuales - egresos virtuales.</p>
+                    </div>
+                </div>
+
+                <div class="glass-card rounded-3xl overflow-hidden border border-white/10 p-4 space-y-3">
+                    <h3 class="font-bold text-sm text-brand-neon">Historial de Movimientos de Caja & Ventas</h3>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-xs">
+                            <thead class="bg-black/60 text-gray-400 uppercase tracking-wider border-b border-white/10">
+                                <tr>
+                                    <th class="p-3">Fecha</th>
+                                    <th class="p-3">Tipo / Concepto</th>
+                                    <th class="p-3">Detalle / Descripción</th>
+                                    <th class="p-3">Cuenta</th>
+                                    <th class="p-3">Monto</th>
+                                </tr>
+                            </thead>
+                            <tbody id="cashflow-table-body" class="divide-y divide-white/5"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB 3: INVENTARIO -->
             <section id="tab-inventory" class="tab-content hidden space-y-6">
-                
-                <!-- Métricas Totales del Inventario -->
                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
                     <div class="glass-card p-4 rounded-2xl border-l-4 border-l-blue-400">
                         <span class="text-[10px] font-bold uppercase tracking-wider text-gray-400">Inversión Total (A Costo)</span>
@@ -447,7 +498,7 @@
                 <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
                     <div>
                         <h2 class="text-lg sm:text-xl font-bold">Registro de Compras y Facturación</h2>
-                        <p class="text-xs text-gray-400">Historial editable y control de días de fiado</p>
+                        <p class="text-xs text-gray-400">Historial editable y control de abonos a fiados</p>
                     </div>
                     <button onclick="exportSalesToExcel()" class="w-full sm:w-auto px-4 py-2.5 bg-green-600 text-white text-xs font-bold rounded-xl hover:bg-green-500 flex items-center justify-center gap-2">
                         <i class="fa-solid fa-file-excel"></i> Exportar Excel
@@ -463,8 +514,8 @@
                                     <th class="p-3 sm:p-4">Fecha</th>
                                     <th class="p-3 sm:p-4">Cliente</th>
                                     <th class="p-3 sm:p-4">Total</th>
+                                    <th class="p-3 sm:p-4">Abonado</th>
                                     <th class="p-3 sm:p-4">Saldo Fiado</th>
-                                    <th class="p-3 sm:p-4">Días de Fiado</th>
                                     <th class="p-3 sm:p-4 text-center">Acciones</th>
                                 </tr>
                             </thead>
@@ -633,7 +684,7 @@
         </main>
     </div>
 
-    <!-- MODALES VARIOS -->
+    <!-- MODALES -->
     <div id="modal-capital" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
         <div class="glass-card w-full max-w-sm p-6 rounded-3xl space-y-4">
             <h3 class="font-bold text-base text-brand-neon">Editar Capital Base Inicial</h3>
@@ -648,6 +699,60 @@
             <div class="flex justify-end gap-2 pt-2">
                 <button onclick="closeCapitalModal()" class="px-4 py-2 bg-gray-700 text-xs rounded-xl">Cancelar</button>
                 <button onclick="saveCapitalBase()" class="px-4 py-2 bg-brand-neon text-black text-xs font-bold rounded-xl">Guardar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL ABONO A DEUDA -->
+    <div id="modal-pay-debt" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
+        <div class="glass-card w-full max-w-md p-6 rounded-3xl space-y-4">
+            <h3 class="font-bold text-base text-brand-neon">Registrar Abono o Pago de Deuda</h3>
+            <input type="hidden" id="pay-sale-id">
+            <div>
+                <label class="block text-xs text-gray-300 mb-1">Cliente / Factura</label>
+                <div id="pay-debt-info" class="text-xs font-bold text-white bg-black/40 p-2.5 rounded-xl"></div>
+            </div>
+            <div>
+                <label class="block text-xs text-gray-300 mb-1">Monto a Abonar / Pagar ($)</label>
+                <input type="number" id="pay-amount-input" class="w-full p-2.5 rounded-xl glass-input text-xs" placeholder="Ej: 50000">
+            </div>
+            <div>
+                <label class="block text-xs text-gray-300 mb-1">Cuenta donde entra el dinero</label>
+                <select id="pay-account-select" class="w-full p-2.5 rounded-xl glass-input text-xs">
+                    <option value="Efectivo">Efectivo (Físico)</option>
+                    <option value="Virtual">Virtual (Nequi/Banco)</option>
+                </select>
+            </div>
+            <div class="flex justify-end gap-2 pt-2">
+                <button onclick="closePayDebtModal()" class="px-4 py-2 bg-gray-700 text-xs rounded-xl">Cancelar</button>
+                <button onclick="confirmPayDebt()" class="px-4 py-2 bg-brand-neon text-black text-xs font-bold rounded-xl">Registrar Abono</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL FLUJO DE CAJA INGRESO/EGRESO -->
+    <div id="modal-cashflow-mov" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
+        <div class="glass-card w-full max-w-md p-6 rounded-3xl space-y-4">
+            <h3 id="cf-modal-title" class="font-bold text-base text-brand-neon">Movimiento de Caja</h3>
+            <input type="hidden" id="cf-mov-type">
+            <div>
+                <label class="block text-xs text-gray-300 mb-1">Descripción / Concepto</label>
+                <input type="text" id="cf-mov-desc" class="w-full p-2.5 rounded-xl glass-input text-xs" placeholder="Ej: Venta extra, pago de servicio, etc.">
+            </div>
+            <div>
+                <label class="block text-xs text-gray-300 mb-1">Monto ($)</label>
+                <input type="number" id="cf-mov-amount" class="w-full p-2.5 rounded-xl glass-input text-xs" placeholder="0">
+            </div>
+            <div>
+                <label class="block text-xs text-gray-300 mb-1">Cuenta</label>
+                <select id="cf-mov-account" class="w-full p-2.5 rounded-xl glass-input text-xs">
+                    <option value="Efectivo">Efectivo (Físico)</option>
+                    <option value="Virtual">Virtual (Nequi/Banco)</option>
+                </select>
+            </div>
+            <div class="flex justify-end gap-2 pt-2">
+                <button onclick="closeCashFlowModal()" class="px-4 py-2 bg-gray-700 text-xs rounded-xl">Cancelar</button>
+                <button onclick="saveCashFlowMovement()" class="px-4 py-2 bg-brand-neon text-black text-xs font-bold rounded-xl">Guardar</button>
             </div>
         </div>
     </div>
@@ -855,7 +960,7 @@
 
     <!-- MAIN JAVASCRIPT LOGIC -->
     <script>
-        const DB_KEY = 'VALMY_STORE_DATABASE_V6';
+        const DB_KEY = 'VALMY_STORE_DATABASE_V7';
 
         let db = JSON.parse(localStorage.getItem(DB_KEY)) || {
             users: [
@@ -872,7 +977,8 @@
             ],
             sales: [],
             orders: [],
-            finance: []
+            finance: [],
+            cashFlowLog: [] // Registro para el flujo de caja detallado
         };
 
         let currentUser = null;
@@ -916,7 +1022,6 @@
             }
         }
 
-        // Restringe la interfaz según el Rol
         function applyRoleRestrictions() {
             const adminElements = document.querySelectorAll('.admin-only');
             if (currentUser && currentUser.role === 'Colaborador') {
@@ -938,7 +1043,6 @@
         }
 
         function switchTab(tabId) {
-            // Protección de rol: colaborador solo puede ir a POS
             if (currentUser && currentUser.role === 'Colaborador' && tabId !== 'pos') {
                 tabId = 'pos';
             }
@@ -961,6 +1065,7 @@
 
         function refreshUI() {
             renderDashboard();
+            renderCashFlow();
             renderPosProducts();
             renderPosCustomerOptions();
             renderInventoryTable();
@@ -971,6 +1076,7 @@
             renderSettings();
         }
 
+        // CÁLCULO DE FLUJO DE CAJA Y META SEMANAL
         function renderDashboard() {
             if (currentUser && currentUser.role === 'Colaborador') return;
 
@@ -980,17 +1086,41 @@
             document.getElementById('dash-capital-virtual').innerText = `$${baseVirt.toLocaleString()}`;
             document.getElementById('dash-capital-total').innerText = `$${(baseCash + baseVirt).toLocaleString()}`;
 
-            let cashFlow = 0;
-            let virtFlow = 0;
+            // Calcular Flujo de Caja en base a base + movimientos registrados + abonos/ventas pagadas - egresos
+            let cashFlow = baseCash;
+            let virtFlow = baseVirt;
             let pendingDebts = 0;
-            let weeklyNetProfit = 0;
+            let weeklyRealProfit = 0; // Utilidad limpia cobrada (excluye fiados hasta que se abonen)
 
             db.sales.forEach(s => {
-                if (s.paymentMethod === 'Efectivo') cashFlow += s.paid;
-                else if (s.paymentMethod === 'Virtual') virtFlow += s.paid;
-                else if (s.paymentMethod === 'Fiado') cashFlow += s.paid;
                 pendingDebts += s.debt;
-                weeklyNetProfit += s.netProfit;
+                
+                // Utilidad proporcional cobrada en función del porcentaje pagado de la venta
+                if (s.total > 0) {
+                    const proportionPaid = s.paid / s.total;
+                    weeklyRealProfit += (s.netProfit * proportionPaid);
+                }
+            });
+
+            // Sumar/restar movimientos adicionales de flujo de caja y finanzas
+            db.cashFlowLog.forEach(m => {
+                if (m.type === 'Ingreso') {
+                    if (m.account === 'Efectivo') cashFlow += m.amount;
+                    else virtFlow += m.amount;
+                } else if (m.type === 'Egreso') {
+                    if (m.account === 'Efectivo') cashFlow -= m.amount;
+                    else virtFlow -= m.amount;
+                }
+            });
+
+            db.finance.forEach(f => {
+                if (f.type === 'Ingreso') {
+                    if (f.account === 'Efectivo') cashFlow += f.amount;
+                    else virtFlow += f.amount;
+                } else {
+                    if (f.account === 'Efectivo') cashFlow -= f.amount;
+                    else virtFlow -= f.amount;
+                }
             });
 
             document.getElementById('dash-cash-flow').innerText = `$${cashFlow.toLocaleString()}`;
@@ -998,24 +1128,24 @@
             document.getElementById('dash-pending-debts').innerText = `$${pendingDebts.toLocaleString()}`;
 
             const goal = 395000;
-            const pct = Math.min(100, Math.round((weeklyNetProfit / goal) * 100));
-            document.getElementById('weekly-profit-current').innerText = `$${weeklyNetProfit.toLocaleString()}`;
+            const pct = Math.min(100, Math.round((weeklyRealProfit / goal) * 100));
+            document.getElementById('weekly-profit-current').innerText = `$${Math.round(weeklyRealProfit).toLocaleString()}`;
             document.getElementById('weekly-profit-bar').style.width = `${pct}%`;
             document.getElementById('weekly-profit-percentage').innerText = `${pct}% Completado`;
 
             const titleEl = document.getElementById('weekly-motive-title');
             const subEl = document.getElementById('weekly-motive-subtitle');
-            const diff = goal - weeklyNetProfit;
+            const diff = goal - weeklyRealProfit;
 
-            if (weeklyNetProfit <= 0) {
-                titleEl.innerText = "¡Qué más Valmy! 🐱 Te faltan $395.000 COP, ¡ánimo! 🔥";
-                subEl.innerHTML = `Empieza a registrar ventas para alimentar la gráfica.`;
+            if (weeklyRealProfit <= 0) {
+                titleEl.innerText = "¡Qué más Valmy! 🐱 Te faltan $395.000 COP cobrados, ¡ánimo! 🔥";
+                subEl.innerHTML = `Los fiados no suman a la meta hasta que sean pagados.`;
             } else if (diff > 0) {
-                titleEl.innerText = `¡Qué más Valmy! Te faltan $${diff.toLocaleString()} COP, ¡ánimo! 🔥`;
-                subEl.innerHTML = `Llevas acumulados <b>$${weeklyNetProfit.toLocaleString()} COP</b> de utilidad limpia.`;
+                titleEl.innerText = `¡Qué más Valmy! Te faltan $${Math.round(diff).toLocaleString()} COP, ¡ánimo! 🔥`;
+                subEl.innerHTML = `Llevas cobrados <b>$${Math.round(weeklyRealProfit).toLocaleString()} COP</b> de utilidad real.`;
             } else {
-                titleEl.innerText = "¡Uff Valmy, la rompiste toda esta semana! 🎉🐱";
-                subEl.innerHTML = `Superaste el punto de equilibrio con <b>$${weeklyNetProfit.toLocaleString()} COP</b>.`;
+                titleEl.innerText = "¡Uff Valmy, la rompiste toda esta semana con los cobros! 🎉🐱";
+                subEl.innerHTML = `Superaste la meta con <b>$${Math.round(weeklyRealProfit).toLocaleString()} COP</b> de utilidad real.`;
             }
 
             const debtorsDiv = document.getElementById('dashboard-debtors-list');
@@ -1031,10 +1161,10 @@
                             <div>
                                 <div class="font-bold text-white text-sm">${d.customerName}</div>
                                 <div class="text-[10px] text-gray-400">Factura #${d.id} • Tel: ${d.customerPhone}</div>
-                                <div class="text-[10px] font-bold text-yellow-400 mt-0.5">⏱️ Días fiado: ${days} días</div>
+                                <div class="text-[10px] font-bold text-yellow-400 mt-0.5">⏱️ Días fiado: ${days} días | Pendiente: $${d.debt.toLocaleString()}</div>
                             </div>
-                            <div class="text-left sm:text-right flex sm:flex-col justify-between items-end gap-1">
-                                <div class="font-bold text-red-400 text-sm">$${d.debt.toLocaleString()}</div>
+                            <div class="flex gap-1 items-center">
+                                <button onclick="openPayDebtModal(${d.id})" class="px-2 py-1 bg-green-600 hover:bg-green-500 text-white font-bold rounded-lg text-[10px]">Abonar</button>
                                 <button onclick="sendDebtCollectionMsg('${d.customerName}', '${d.customerPhone}', ${d.debt}, ${days})" class="px-2.5 py-1 bg-red-600 hover:bg-red-500 text-white font-extrabold rounded-lg text-[10px] flex items-center gap-1">
                                     <i class="fa-brands fa-whatsapp"></i> Cobrar
                                 </button>
@@ -1064,6 +1194,157 @@
             }
         }
 
+        // PESTAÑA Y LÓGICA DE FLUJO DE CAJA
+        function renderCashFlow() {
+            let cash = db.capitalBase.cash || 0;
+            let virtual = db.capitalBase.virtual || 0;
+
+            db.sales.forEach(s => {
+                if (s.paymentMethod === 'Efectivo') cash += s.paid;
+                else if (s.paymentMethod === 'Virtual') virtual += s.paid;
+                else if (s.paymentMethod === 'Fiado') cash += s.paid; // si hubo abono inicial en efectivo
+            });
+
+            db.cashFlowLog.forEach(m => {
+                if (m.type === 'Ingreso') {
+                    if (m.account === 'Efectivo') cash += m.amount;
+                    else virtual += m.amount;
+                } else {
+                    if (m.account === 'Efectivo') cash -= m.amount;
+                    else virtual -= m.amount;
+                }
+            });
+
+            db.finance.forEach(f => {
+                if (f.type === 'Ingreso') {
+                    if (f.account === 'Efectivo') cash += f.amount;
+                    else virtual += f.amount;
+                } else {
+                    if (f.account === 'Efectivo') cash -= f.amount;
+                    else virtual -= f.amount;
+                }
+            });
+
+            document.getElementById('cf-total-cash`').innerText = `$${cash.toLocaleString()}`;
+            document.getElementById('cf-total-virtual').innerText = `$${virtual.toLocaleString()}`;
+
+            const tbody = document.getElementById('cashflow-table-body');
+            tbody.innerHTML = '';
+
+            // Combinar ventas y movimientos de caja en una lista cronológica
+            let combined = [];
+            db.sales.forEach(s => {
+                if (s.paid > 0) {
+                    combined.push({
+                        date: s.date,
+                        type: 'Venta / Abono',
+                        desc: `Factura #${s.id} - ${s.customerName} (${s.paymentMethod})`,
+                        account: s.paymentMethod === 'Virtual' ? 'Virtual' : 'Efectivo',
+                        amount: s.paid
+                    });
+                }
+            });
+
+            db.cashFlowLog.forEach(m => combined.push(m));
+            db.finance.forEach(f => combined.push(f));
+
+            if (combined.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" class="p-4 text-center text-gray-500 italic">No hay movimientos registrados en caja.</td></tr>';
+                return;
+            }
+
+            combined.sort((a,b) => new Date(b.date) - new Date(a.date));
+
+            combined.forEach(item => {
+                tbody.innerHTML += `
+                    <tr class="hover:bg-white/5">
+                        <td class="p-3 text-gray-300">${item.date}</td>
+                        <td class="p-3 font-bold ${item.type === 'Ingreso' || item.type === 'Venta / Abono' ? 'text-green-400' : 'text-red-400'}">${item.type}</td>
+                        <td class="p-3 text-white">${item.desc || item.description}</td>
+                        <td class="p-3 text-gray-300">${item.account}</td>
+                        <td class="p-3 font-bold text-white">$${item.amount.toLocaleString()}</td>
+                    </tr>
+                `;
+            });
+        }
+
+        function openCashFlowModal(type) {
+            document.getElementById('cf-mov-type').value = type;
+            document.getElementById('cf-modal-title').innerText = type === 'Ingreso' ? 'Registrar Ingreso de Dinero' : 'Registrar Retiro / Gasto';
+            document.getElementById('cf-mov-desc').value = '';
+            document.getElementById('cf-mov-amount').value = '';
+            document.getElementById('modal-cashflow-mov').classList.remove('hidden');
+        }
+
+        function closeCashFlowModal() {
+            document.getElementById('modal-cashflow-mov').classList.add('hidden');
+        }
+
+        function saveCashFlowMovement() {
+            const type = document.getElementById('cf-mov-type').value;
+            const desc = document.getElementById('cf-mov-desc').value.trim();
+            const amount = parseFloat(document.getElementById('cf-mov-amount').value) || 0;
+            const account = document.getElementById('cf-mov-account').value;
+
+            if (!desc || amount <= 0) return alert('Completa la descripción y un monto válido.');
+
+            db.cashFlowLog.unshift({
+                id: Date.now(),
+                date: new Date().toISOString().split('T')[0],
+                type,
+                desc,
+                account,
+                amount
+            });
+
+            closeCashFlowModal();
+            saveDB();
+        }
+
+        // GESTIÓN DE ABONOS A DEUDAS
+        function openPayDebtModal(saleId) {
+            const sale = db.sales.find(s => s.id === saleId);
+            if (!sale) return;
+
+            document.getElementById('pay-sale-id').value = sale.id;
+            document.getElementById('pay-debt-info').innerText = `Factura #${sale.id} - ${sale.customerName} | Deuda Restante: $${sale.debt.toLocaleString()}`;
+            document.getElementById('pay-amount-input').value = sale.debt;
+            document.getElementById('modal-pay-debt').classList.remove('hidden');
+        }
+
+        function closePayDebtModal() {
+            document.getElementById('modal-pay-debt').classList.add('hidden');
+        }
+
+        function confirmPayDebt() {
+            const saleId = document.getElementById('pay-sale-id').value;
+            const amount = parseFloat(document.getElementById('pay-amount-input').value) || 0;
+            const account = document.getElementById('pay-account-select').value;
+
+            const sale = db.sales.find(s => s.id == saleId);
+            if (!sale) return;
+
+            if (amount <= 0 || amount > sale.debt) {
+                return alert('Monto de abono inválido o superior a la deuda.');
+            }
+
+            sale.paid += amount;
+            sale.debt -= amount;
+
+            // Registrar también en el flujo de caja como ingreso por abono de deuda
+            db.cashFlowLog.unshift({
+                id: Date.now(),
+                date: new Date().toISOString().split('T')[0],
+                type: 'Ingreso',
+                desc: `Abono de deuda - Factura #${sale.id} (${sale.customerName})`,
+                account,
+                amount
+            });
+
+            closePayDebtModal();
+            saveDB();
+        }
+
         function sendDebtCollectionMsg(name, phone, debt, days) {
             let msg = `Hola ${name}, ¿cómo estás? 👋🐱\n\n`;
             msg += `Paso a recordarte que llevas *${days} días* desde que sacaste esta prenda fiada en Valmy Store.\n\n`;
@@ -1090,7 +1371,7 @@
             saveDB();
         }
 
-        // INVENTARIO CON CÁLCULO FINANCIERO TOTAL
+        // INVENTARIO
         function renderInventoryTable() {
             const tbody = document.getElementById('inventory-table-body');
             tbody.innerHTML = '';
@@ -1125,7 +1406,6 @@
                 `;
             });
 
-            // Actualiza tarjetas de totales de inventario
             document.getElementById('inv-total-cost').innerText = `$${totalCostInvestment.toLocaleString()}`;
             document.getElementById('inv-total-retail').innerText = `$${totalRetailValue.toLocaleString()}`;
             document.getElementById('inv-total-profit').innerText = `$${totalExpectedProfit.toLocaleString()}`;
@@ -1512,7 +1792,7 @@
                             </div>
                         </td>
                         <td class="p-3 sm:p-4 text-center space-x-1">
-                            <button onclick="editClient(${c.id})" class="p-1.5 text-blue-400 hover:text-white"><i class="fa-solid fa-pen"></i></button>
+                            <button onclick="openClientModal(${c.id})" class="p-1.5 text-blue-400 hover:text-white"><i class="fa-solid fa-pen"></i></button>
                             <button onclick="deleteClient(${c.id})" class="p-1.5 text-red-400 hover:text-white"><i class="fa-solid fa-trash"></i></button>
                         </td>
                     </tr>
@@ -1607,12 +1887,11 @@
                         <td class="p-3 sm:p-4 text-gray-300">${s.date}</td>
                         <td class="p-3 sm:p-4 text-white font-bold">${s.customerName}</td>
                         <td class="p-3 sm:p-4 font-bold text-white">$${s.total.toLocaleString()}</td>
+                        <td class="p-3 sm:p-4 font-bold text-green-400">$${s.paid.toLocaleString()}</td>
                         <td class="p-3 sm:p-4 font-bold ${s.debt > 0 ? 'text-red-400' : 'text-gray-400'}">$${s.debt.toLocaleString()}</td>
-                        <td class="p-3 sm:p-4 font-bold ${s.debt > 0 ? 'text-yellow-400' : 'text-gray-500'}">
-                            ${s.debt > 0 ? `${days} días` : '-'}
-                        </td>
                         <td class="p-3 sm:p-4 text-center space-x-1">
                             <button onclick="openReceiptModal(${s.id})" class="p-1.5 text-brand-neon hover:underline" title="Factura"><i class="fa-solid fa-receipt"></i></button>
+                            ${s.debt > 0 ? `<button onclick="openPayDebtModal(${s.id})" class="p-1.5 text-green-400 hover:text-white" title="Abonar Deuda"><i class="fa-solid fa-hand-holding-dollar"></i></button>` : ''}
                             ${s.debt > 0 ? `<button onclick="sendDebtCollectionMsg('${s.customerName}', '${s.customerPhone}', ${s.debt}, ${days})" class="p-1.5 text-red-400 hover:text-white" title="Cobrar"><i class="fa-brands fa-whatsapp"></i></button>` : ''}
                             <button onclick="deleteSale(${s.id})" class="p-1.5 text-gray-400 hover:text-white"><i class="fa-solid fa-trash"></i></button>
                         </td>
@@ -1812,19 +2091,24 @@
             }
 
             let response = greeting;
-            const weeklyProfit = db.sales.reduce((acc, curr) => acc + curr.netProfit, 0);
+            let weeklyRealProfit = 0;
+            db.sales.forEach(s => {
+                if (s.total > 0) {
+                    weeklyRealProfit += (s.netProfit * (s.paid / s.total));
+                }
+            });
 
             if (q.includes('inventario') || q.includes('promoción') || q.includes('descuento')) {
                 response += `Tienes prendas con excelente margen en catálogo. Podríamos enviar una oferta relámpago por WhatsApp a tus clientes habituales.`;
             } else if (q.includes('meta') || q.includes('falta') || q.includes('ganancia')) {
-                const diff = 395000 - weeklyProfit;
+                const diff = 395000 - weeklyRealProfit;
                 if (diff > 0) {
-                    response += `Llevas **$${weeklyProfit.toLocaleString()} COP** de utilidad esta semana. Te faltan **$${diff.toLocaleString()} COP** para la meta. ¡Ánimo, a meterle la ficha! 🔥`;
+                    response += `Llevas **$${Math.round(weeklyRealProfit).toLocaleString()} COP** de utilidad cobrada esta semana. Te faltan **$${Math.round(diff).toLocaleString()} COP** para la meta. ¡Ánimo, a meterle la ficha! 🔥`;
                 } else {
-                    response += `¡Uff Valmy, ya la rompiste! Superaste la meta con **$${weeklyProfit.toLocaleString()} COP** de utilidad neta. 🎉`;
+                    response += `¡Uff Valmy, ya la rompiste! Superaste la meta con **$${Math.round(weeklyRealProfit).toLocaleString()} COP** de utilidad neta cobrada. 🎉`;
                 }
             } else {
-                response += `Aquí estoy listo para colaborarte con el control financiero de la tienda. Puedes revisar cartera con días de retraso o registrar nuevas ventas. 🔥🐱`;
+                response += `Aquí estoy listo para colaborarte con el control financiero de la tienda. Puedes revisar cartera con días de retraso o el flujo de caja. 🔥🐱`;
             }
 
             setTimeout(() => {
