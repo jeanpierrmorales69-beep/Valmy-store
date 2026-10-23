@@ -110,9 +110,8 @@
         <div class="glass-card w-full max-w-md p-6 sm:p-8 rounded-3xl border border-brand-neon/30 text-center relative overflow-hidden">
             <div class="absolute -top-10 -right-10 w-32 h-32 bg-brand-neon/10 rounded-full blur-2xl pointer-events-none"></div>
             
-            <div class="w-20 h-20 sm:w-24 sm:h-24 mx-auto mb-4 bg-brand-dark rounded-full flex items-center justify-center border-2 border-brand-neon shadow-lg relative">
-                <i class="fa-solid fa-cat text-3xl sm:text-4xl text-brand-neon"></i>
-                <div class="absolute -bottom-1 -right-1 bg-brand-neon text-black text-[10px] sm:text-xs font-bold px-2 py-0.5 rounded-full">VALMY</div>
+            <div class="w-20 h-20 sm:w-24 sm:h-24 mx-auto mb-4 bg-brand-dark rounded-full flex items-center justify-center border-2 border-brand-neon shadow-lg relative overflow-hidden">
+                <img src="logo.png" alt="Valmy Store Logo" class="w-full h-full object-cover" onerror="this.onerror=null; this.parentElement.innerHTML='<i class=\'fa-solid fa-cat text-3xl text-brand-neon\'></i>';">
             </div>
 
             <h1 class="urban-graffiti-tag text-2xl sm:text-3xl mb-1">VALMY STORE</h1>
@@ -145,8 +144,8 @@
             <div class="max-w-7xl mx-auto flex items-center justify-between gap-2 sm:gap-4">
                 
                 <div class="flex items-center gap-2 sm:gap-3">
-                    <div class="w-9 h-9 sm:w-10 sm:h-10 bg-brand-dark rounded-2xl flex items-center justify-center border border-brand-neon shadow-md shrink-0">
-                        <i class="fa-solid fa-cat text-brand-neon text-lg sm:text-xl"></i>
+                    <div class="w-9 h-9 sm:w-10 sm:h-10 bg-brand-dark rounded-2xl flex items-center justify-center border border-brand-neon shadow-md shrink-0 overflow-hidden">
+                        <img src="logo.png" alt="Valmy Store Logo" class="w-full h-full object-cover" onerror="this.onerror=null; this.parentElement.innerHTML='<i class=\'fa-solid fa-cat text-brand-neon text-lg\'></i>';">
                     </div>
                     <div>
                         <h1 class="urban-graffiti-tag text-lg sm:text-xl leading-none">VALMY STORE</h1>
@@ -162,7 +161,7 @@
                         <i class="fa-solid fa-cash-register mr-1"></i> Vender
                     </button>
                     <button onclick="switchTab('cashflow')" id="nav-cashflow" class="nav-btn admin-only px-3 py-2 rounded-xl text-xs font-bold text-gray-400 hover:text-white transition-all">
-                        <i class="fa-solid fa-vault mr-1 text-brand-neon"></i> Flujo de Caja
+                        <i class="fa-solid fa-vault mr-1 text-brand-neon"></i> Flujo de Caja & Finanzas
                     </button>
                     <button onclick="switchTab('inventory')" id="nav-inventory" class="nav-btn admin-only px-3 py-2 rounded-xl text-xs font-bold text-gray-400 hover:text-white transition-all">
                         <i class="fa-solid fa-boxes-stacked mr-1"></i> Inventario
@@ -189,7 +188,7 @@
                         <div id="current-user-name" class="text-xs font-bold text-white">andres</div>
                         <div id="current-user-role" class="text-[10px] text-brand-neon font-semibold">Administrador</div>
                     </div>
-                    <div class="w-8 h-8 sm:w-9 sm:h-9 bg-brand border border-white/20 rounded-full flex items-center justify-center text-sm font-bold shadow">
+                    <div class="w-8 h-8 sm:w-9 sm:h-9 bg-brand border border-white/20 rounded-full flex items-center justify-center text-sm font-bold shadow overflow-hidden">
                         <span id="current-user-avatar">🐱</span>
                     </div>
                     <button onclick="logout()" class="p-1.5 sm:p-2 text-gray-400 hover:text-red-400 transition-colors" title="Cerrar Sesión">
@@ -396,12 +395,15 @@
                         <h2 class="text-lg sm:text-xl font-bold flex items-center gap-2"><i class="fa-solid fa-vault text-brand-neon"></i> Flujo de Caja & Finanzas</h2>
                         <p class="text-xs text-gray-400">Control unificado de ingresos, egresos y dinero disponible en tiempo real</p>
                     </div>
-                    <div class="flex gap-2 w-full sm:w-auto">
-                        <button onclick="openCashFlowModal('Ingreso')" class="flex-1 sm:flex-none px-4 py-2.5 bg-green-600 text-white text-xs font-bold rounded-xl hover:bg-green-500 flex items-center justify-center gap-2">
-                            <i class="fa-solid fa-plus-circle"></i> + Ingreso Extra
+                    <div class="flex flex-wrap gap-2 w-full sm:w-auto">
+                        <button onclick="exportCashFlowToExcel()" class="px-3.5 py-2.5 bg-green-600 text-white text-xs font-bold rounded-xl hover:bg-green-500 flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-file-excel"></i> Exportar Excel
                         </button>
-                        <button onclick="openCashFlowModal('Egreso')" class="flex-1 sm:flex-none px-4 py-2.5 bg-red-600 text-white text-xs font-bold rounded-xl hover:bg-red-500 flex items-center justify-center gap-2">
-                            <i class="fa-solid fa-minus-circle"></i> - Retirar / Gasto
+                        <button onclick="openCashFlowModal('Ingreso')" class="px-3.5 py-2.5 bg-brand-neon text-black text-xs font-bold rounded-xl hover:bg-yellow-300 flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-plus-circle"></i> + Ingreso
+                        </button>
+                        <button onclick="openCashFlowModal('Egreso')" class="px-3.5 py-2.5 bg-red-600 text-white text-xs font-bold rounded-xl hover:bg-red-500 flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-minus-circle"></i> - Egreso
                         </button>
                     </div>
                 </div>
@@ -430,6 +432,7 @@
                                     <th class="p-3">Detalle / Descripción</th>
                                     <th class="p-3">Cuenta</th>
                                     <th class="p-3">Monto</th>
+                                    <th class="p-3 text-center">Acciones</th>
                                 </tr>
                             </thead>
                             <tbody id="cashflow-table-body" class="divide-y divide-white/5"></tbody>
@@ -570,8 +573,8 @@
             <section id="tab-ai-assistant" class="tab-content hidden space-y-4">
                 <div class="glass-card p-4 rounded-3xl flex items-center justify-between border border-brand-neon/30">
                     <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 bg-brand-dark rounded-full flex items-center justify-center border border-brand-neon shrink-0">
-                            <i class="fa-solid fa-robot text-brand-neon text-lg"></i>
+                        <div class="w-10 h-10 bg-brand-dark rounded-full flex items-center justify-center border border-brand-neon shrink-0 overflow-hidden">
+                            <img src="logo.png" alt="Valmy Store Logo" class="w-full h-full object-cover" onerror="this.onerror=null; this.parentElement.innerHTML='<i class=\'fa-solid fa-robot text-brand-neon text-lg\'></i>';">
                         </div>
                         <div>
                             <h3 class="font-bold text-sm">Asistente IA Valmy Store</h3>
@@ -687,10 +690,11 @@
         </div>
     </div>
 
-    <!-- MODAL FLUJO DE CAJA INGRESO/EGRESO -->
+    <!-- MODAL FLUJO DE CAJA INGRESO/EGRESO (CON EDICIÓN) -->
     <div id="modal-cashflow-mov" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
         <div class="glass-card w-full max-w-md p-6 rounded-3xl space-y-4">
             <h3 id="cf-modal-title" class="font-bold text-base text-brand-neon">Movimiento de Caja</h3>
+            <input type="hidden" id="cf-mov-id">
             <input type="hidden" id="cf-mov-type">
             <div>
                 <label class="block text-xs text-gray-300 mb-1">Descripción / Concepto</label>
@@ -819,10 +823,15 @@
             
             <div id="receipt-printable-area" class="invoice-letter-paper p-5 sm:p-8 rounded-2xl font-sans text-xs space-y-4 sm:space-y-6">
                 <div class="flex justify-between items-start border-b border-brand-neon/40 pb-4">
-                    <div>
-                        <div class="urban-graffiti-tag text-2xl sm:text-3xl text-brand-neon">VALMY STORE</div>
-                        <div class="text-[10px] sm:text-[11px] text-gray-300">Ropa Urbana & Estilo Exclusivo</div>
-                        <div class="text-[9px] sm:text-[10px] text-gray-400">Cali, Valle del Cauca - Colombia</div>
+                    <div class="flex items-center gap-3">
+                        <div class="w-12 h-12 rounded-xl bg-brand-dark border border-brand-neon flex items-center justify-center overflow-hidden shrink-0">
+                            <img src="logo.png" alt="Logo Valmy" class="w-full h-full object-cover" onerror="this.onerror=null; this.parentElement.innerHTML='<i class=\'fa-solid fa-cat text-2xl text-brand-neon\'></i>';">
+                        </div>
+                        <div>
+                            <div class="urban-graffiti-tag text-2xl sm:text-3xl text-brand-neon">VALMY STORE</div>
+                            <div class="text-[10px] sm:text-[11px] text-gray-300">Ropa Urbana & Estilo Exclusivo</div>
+                            <div class="text-[9px] sm:text-[10px] text-gray-400">Cali, Valle del Cauca - Colombia</div>
+                        </div>
                     </div>
                     <div class="text-right">
                         <span id="rec-debt-badge" class="px-2.5 py-1 bg-green-500/20 text-green-400 text-[10px] sm:text-xs font-bold rounded-full border border-green-500/30">PAGADO TOTAL</span>
@@ -893,7 +902,7 @@
 
     <!-- MAIN JAVASCRIPT LOGIC -->
     <script>
-        const DB_KEY = 'VALMY_STORE_DATABASE_V8';
+        const DB_KEY = 'VALMY_STORE_DATABASE_V9';
 
         let db = JSON.parse(localStorage.getItem(DB_KEY)) || {
             users: [
@@ -1119,7 +1128,7 @@
             }
         }
 
-        // FLUJO DE CAJA
+        // FLUJO DE CAJA & FINANZAS
         function renderCashFlow() {
             let cash = db.capitalBase.cash || 0;
             let virtual = db.capitalBase.virtual || 0;
@@ -1147,22 +1156,37 @@
             tbody.innerHTML = '';
 
             let combined = [];
+
+            // Añadir ventas
             db.sales.forEach(s => {
                 if (s.paid > 0) {
                     combined.push({
+                        id: `sale-${s.id}`,
                         date: s.date,
                         type: 'Venta / Abono',
                         desc: `Factura #${s.id} - ${s.customerName} (${s.paymentMethod})`,
                         account: s.paymentMethod === 'Virtual' ? 'Virtual' : 'Efectivo',
-                        amount: s.paid
+                        amount: s.paid,
+                        isSale: true
                     });
                 }
             });
 
-            db.cashFlowLog.forEach(m => combined.push(m));
+            // Añadir movimientos de caja
+            db.cashFlowLog.forEach(m => {
+                combined.push({
+                    id: m.id,
+                    date: m.date,
+                    type: m.type,
+                    desc: m.desc,
+                    account: m.account,
+                    amount: m.amount,
+                    isSale: false
+                });
+            });
 
             if (combined.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="5" class="p-4 text-center text-gray-500 italic">No hay movimientos registrados en caja.</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="6" class="p-4 text-center text-gray-500 italic">No hay movimientos registrados en caja.</td></tr>';
                 return;
             }
 
@@ -1170,22 +1194,41 @@
 
             combined.forEach(item => {
                 tbody.innerHTML += `
-                    <tr class="hover:bg-white/5">
+                    <tr class="hover:bg-white/5 transition-colors">
                         <td class="p-3 text-gray-300">${item.date}</td>
                         <td class="p-3 font-bold ${item.type === 'Ingreso' || item.type === 'Venta / Abono' ? 'text-green-400' : 'text-red-400'}">${item.type}</td>
                         <td class="p-3 text-white">${item.desc}</td>
                         <td class="p-3 text-gray-300">${item.account}</td>
                         <td class="p-3 font-bold text-white">$${item.amount.toLocaleString()}</td>
+                        <td class="p-3 text-center">
+                            ${!item.isSale ? `
+                                <button onclick="editCashFlowMovement(${item.id})" class="p-1 text-blue-400 hover:text-white mr-1" title="Editar"><i class="fa-solid fa-pen"></i></button>
+                                <button onclick="deleteCashFlowMovement(${item.id})" class="p-1 text-red-400 hover:text-white" title="Eliminar"><i class="fa-solid fa-trash"></i></button>
+                            ` : `<span class="text-[10px] text-gray-500 italic">Desde Ventas</span>`}
+                        </td>
                     </tr>
                 `;
             });
         }
 
-        function openCashFlowModal(type) {
+        function openCashFlowModal(type, movId = null) {
+            document.getElementById('cf-mov-id').value = movId || '';
             document.getElementById('cf-mov-type').value = type;
-            document.getElementById('cf-modal-title').innerText = type === 'Ingreso' ? 'Registrar Ingreso de Dinero' : 'Registrar Retiro / Gasto';
-            document.getElementById('cf-mov-desc').value = '';
-            document.getElementById('cf-mov-amount').value = '';
+
+            if (movId) {
+                const mov = db.cashFlowLog.find(x => x.id === movId);
+                if (mov) {
+                    document.getElementById('cf-modal-title').innerText = `Editar ${mov.type}`;
+                    document.getElementById('cf-mov-desc').value = mov.desc;
+                    document.getElementById('cf-mov-amount').value = mov.amount;
+                    document.getElementById('cf-mov-account').value = mov.account;
+                }
+            } else {
+                document.getElementById('cf-modal-title').innerText = type === 'Ingreso' ? 'Registrar Ingreso de Dinero' : 'Registrar Retiro / Gasto';
+                document.getElementById('cf-mov-desc').value = '';
+                document.getElementById('cf-mov-amount').value = '';
+            }
+
             document.getElementById('modal-cashflow-mov').classList.remove('hidden');
         }
 
@@ -1194,6 +1237,7 @@
         }
 
         function saveCashFlowMovement() {
+            const id = document.getElementById('cf-mov-id').value;
             const type = document.getElementById('cf-mov-type').value;
             const desc = document.getElementById('cf-mov-desc').value.trim();
             const amount = parseFloat(document.getElementById('cf-mov-amount').value) || 0;
@@ -1201,17 +1245,72 @@
 
             if (!desc || amount <= 0) return alert('Completa la descripción y un monto válido.');
 
-            db.cashFlowLog.unshift({
-                id: Date.now(),
-                date: new Date().toISOString().split('T')[0],
-                type,
-                desc,
-                account,
-                amount
-            });
+            if (id) {
+                const mov = db.cashFlowLog.find(x => x.id == id);
+                if (mov) {
+                    mov.desc = desc;
+                    mov.amount = amount;
+                    mov.account = account;
+                    mov.type = type;
+                }
+            } else {
+                db.cashFlowLog.unshift({
+                    id: Date.now(),
+                    date: new Date().toISOString().split('T')[0],
+                    type,
+                    desc,
+                    account,
+                    amount
+                });
+            }
 
             closeCashFlowModal();
             saveDB();
+        }
+
+        function editCashFlowMovement(id) {
+            const mov = db.cashFlowLog.find(x => x.id === id);
+            if (mov) openCashFlowModal(mov.type, id);
+        }
+
+        function deleteCashFlowMovement(id) {
+            if (confirm('¿Seguro que deseas eliminar este registro del flujo de caja?')) {
+                db.cashFlowLog = db.cashFlowLog.filter(x => x.id !== id);
+                saveDB();
+            }
+        }
+
+        function exportCashFlowToExcel() {
+            let exportData = [];
+
+            db.sales.forEach(s => {
+                if (s.paid > 0) {
+                    exportData.push({
+                        Fecha: s.date,
+                        Tipo: 'Venta / Abono',
+                        Descripción: `Factura #${s.id} - ${s.customerName}`,
+                        Cuenta: s.paymentMethod === 'Virtual' ? 'Virtual' : 'Efectivo',
+                        Monto: s.paid
+                    });
+                }
+            });
+
+            db.cashFlowLog.forEach(m => {
+                exportData.push({
+                    Fecha: m.date,
+                    Tipo: m.type,
+                    Descripción: m.desc,
+                    Cuenta: m.account,
+                    Monto: m.amount
+                });
+            });
+
+            exportData.sort((a,b) => new Date(b.Fecha) - new Date(a.Fecha));
+
+            const ws = XLSX.utils.json_to_sheet(exportData);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "Flujo de Caja");
+            XLSX.writeFile(wb, "Flujo_de_Caja_ValmyStore.xlsx");
         }
 
         // ABONOS
