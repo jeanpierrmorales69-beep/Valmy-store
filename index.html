@@ -176,9 +176,6 @@
                     <button onclick="switchTab('orders')" id="nav-orders" class="nav-btn admin-only px-3 py-2 rounded-xl text-xs font-bold text-gray-400 hover:text-white transition-all">
                         <i class="fa-solid fa-truck-ramp-box mr-1"></i> Encargos
                     </button>
-                    <button onclick="switchTab('finance')" id="nav-finance" class="nav-btn admin-only px-3 py-2 rounded-xl text-xs font-bold text-gray-400 hover:text-white transition-all">
-                        <i class="fa-solid fa-wallet mr-1"></i> Finanzas
-                    </button>
                     <button onclick="switchTab('ai-assistant')" id="nav-ai-assistant" class="nav-btn admin-only px-3 py-2 rounded-xl text-xs font-bold text-gray-400 hover:text-white transition-all">
                         <i class="fa-solid fa-robot mr-1 text-brand-neon"></i> IA
                     </button>
@@ -210,7 +207,6 @@
                 <button onclick="switchTab('sales-log')" class="admin-only px-3 py-2 rounded-xl font-bold bg-black/40 text-gray-300 whitespace-nowrap">Historial</button>
                 <button onclick="switchTab('clients')" class="admin-only px-3 py-2 rounded-xl font-bold bg-black/40 text-gray-300 whitespace-nowrap">Clientes</button>
                 <button onclick="switchTab('orders')" class="admin-only px-3 py-2 rounded-xl font-bold bg-black/40 text-gray-300 whitespace-nowrap">Encargos</button>
-                <button onclick="switchTab('finance')" class="admin-only px-3 py-2 rounded-xl font-bold bg-black/40 text-gray-300 whitespace-nowrap">Finanzas</button>
                 <button onclick="switchTab('ai-assistant')" class="admin-only px-3 py-2 rounded-xl font-bold bg-black/40 text-gray-300 whitespace-nowrap">IA Chat</button>
                 <button id="admin-settings-mobile" onclick="switchTab('settings')" class="admin-only px-3 py-2 rounded-xl font-bold bg-black/40 text-gray-300 whitespace-nowrap">Ajustes</button>
             </div>
@@ -242,7 +238,7 @@
                             <i class="fa-solid fa-money-bill-wave text-green-400 text-sm"></i>
                         </div>
                         <div id="dash-cash-flow" class="text-2xl font-black mt-2 text-green-400">$0</div>
-                        <p class="text-[10px] text-gray-400 mt-2">Ingresos recibidos en físico</p>
+                        <p class="text-[10px] text-gray-400 mt-2">Ingresos cobrados en efectivo</p>
                     </div>
 
                     <div class="glass-card p-4 sm:p-5 rounded-3xl border-l-4 border-l-cyan-400 relative">
@@ -260,11 +256,11 @@
                             <i class="fa-solid fa-hand-holding-dollar text-red-500 text-sm"></i>
                         </div>
                         <div id="dash-pending-debts" class="text-2xl font-black mt-2 text-red-400">$0</div>
-                        <p class="text-[10px] text-gray-400 mt-2">Deuda total de clientes</p>
+                        <p class="text-[10px] text-gray-400 mt-2">Deuda total por cobrar</p>
                     </div>
                 </div>
 
-                <!-- Punto de Equilibrio Semanal (Excluye ventas puramente fiadas hasta que se abonen) -->
+                <!-- Punto de Equilibrio Semanal -->
                 <div class="glass-card p-5 sm:p-6 rounded-3xl border border-brand-neon/40 relative overflow-hidden space-y-4">
                     <div class="flex flex-col md:flex-row md:items-center justify-between gap-3">
                         <div>
@@ -364,7 +360,7 @@
                                     </div>
                                     <div>
                                         <label class="block text-[11px] font-bold text-gray-300 mb-1">MÉTODO PAGO</label>
-                                        <select id="pos-payment-method" class="w-full p-2.5 rounded-xl glass-input text-xs">
+                                        <select id="pos-payment-method" onchange="calculatePosTotals()" class="w-full p-2.5 rounded-xl glass-input text-xs">
                                             <option value="Efectivo">Efectivo (Físico)</option>
                                             <option value="Virtual">Virtual (Nequi/Banco)</option>
                                             <option value="Fiado">Fiado / Crédito</option>
@@ -373,7 +369,7 @@
                                 </div>
 
                                 <div>
-                                    <label class="block text-[11px] font-bold text-gray-300 mb-1">MONTO CANCELADO (ABONO)</label>
+                                    <label class="block text-[11px] font-bold text-gray-300 mb-1">MONTO CANCELADO (ABONO INICIAL)</label>
                                     <input type="number" id="pos-paid-amount" placeholder="0 si es fiado total" oninput="calculatePosTotals()" class="w-full p-2.5 rounded-xl glass-input text-xs">
                                 </div>
                             </div>
@@ -393,33 +389,33 @@
                 </div>
             </section>
 
-            <!-- TAB 2.5: FLUJO DE CAJA (NUEVA SECCIÓN) -->
+            <!-- TAB 3: FLUJO DE CAJA Y FINANZAS -->
             <section id="tab-cashflow" class="tab-content hidden space-y-6">
                 <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
                     <div>
-                        <h2 class="text-lg sm:text-xl font-bold flex items-center gap-2"><i class="fa-solid fa-vault text-brand-neon"></i> Control de Flujo de Caja</h2>
-                        <p class="text-xs text-gray-400">Dinero disponible real para mover en Efectivo y Virtual</p>
+                        <h2 class="text-lg sm:text-xl font-bold flex items-center gap-2"><i class="fa-solid fa-vault text-brand-neon"></i> Flujo de Caja & Finanzas</h2>
+                        <p class="text-xs text-gray-400">Control unificado de ingresos, egresos y dinero disponible en tiempo real</p>
                     </div>
                     <div class="flex gap-2 w-full sm:w-auto">
                         <button onclick="openCashFlowModal('Ingreso')" class="flex-1 sm:flex-none px-4 py-2.5 bg-green-600 text-white text-xs font-bold rounded-xl hover:bg-green-500 flex items-center justify-center gap-2">
-                            <i class="fa-solid fa-plus-circle"></i> Ingresar Dinero
+                            <i class="fa-solid fa-plus-circle"></i> + Ingreso Extra
                         </button>
                         <button onclick="openCashFlowModal('Egreso')" class="flex-1 sm:flex-none px-4 py-2.5 bg-red-600 text-white text-xs font-bold rounded-xl hover:bg-red-500 flex items-center justify-center gap-2">
-                            <i class="fa-solid fa-minus-circle"></i> Retirar / Gastar
+                            <i class="fa-solid fa-minus-circle"></i> - Retirar / Gasto
                         </button>
                     </div>
                 </div>
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div class="glass-card p-5 rounded-3xl border-l-4 border-l-green-400 space-y-2">
-                        <span class="text-xs font-bold uppercase tracking-wider text-gray-400">Dinero Disponible en Efectivo (Caja Física)</span>
+                        <span class="text-xs font-bold uppercase tracking-wider text-gray-400">Dinero Disponible en Caja Física (Efectivo)</span>
                         <div id="cf-total-cash" class="text-3xl font-black text-green-400">$0</div>
-                        <p class="text-[10px] text-gray-400">Suma de capital base en efectivo + ventas en efectivo + ingresos directos - egresos en efectivo.</p>
+                        <p class="text-[10px] text-gray-400">Capital inicial + Ventas en efectivo + Ingresos directos - Egresos.</p>
                     </div>
                     <div class="glass-card p-5 rounded-3xl border-l-4 border-l-cyan-400 space-y-2">
                         <span class="text-xs font-bold uppercase tracking-wider text-gray-400">Dinero Disponible Virtual (Nequi / Bancos)</span>
                         <div id="cf-total-virtual" class="text-3xl font-black text-cyan-400">$0</div>
-                        <p class="text-[10px] text-gray-400">Suma de capital base virtual + pagos virtuales / transferencias + ingresos virtuales - egresos virtuales.</p>
+                        <p class="text-[10px] text-gray-400">Capital inicial + Pagos digitales + Ingresos virtuales - Egresos.</p>
                     </div>
                 </div>
 
@@ -442,7 +438,7 @@
                 </div>
             </section>
 
-            <!-- TAB 3: INVENTARIO -->
+            <!-- TAB 4: INVENTARIO -->
             <section id="tab-inventory" class="tab-content hidden space-y-6">
                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
                     <div class="glass-card p-4 rounded-2xl border-l-4 border-l-blue-400">
@@ -493,7 +489,7 @@
                 </div>
             </section>
 
-            <!-- TAB 4: VENTAS Y COMPRAS -->
+            <!-- TAB 5: VENTAS -->
             <section id="tab-sales-log" class="tab-content hidden space-y-6">
                 <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
                     <div>
@@ -525,7 +521,7 @@
                 </div>
             </section>
 
-            <!-- TAB 5: CLIENTES -->
+            <!-- TAB 6: CLIENTES -->
             <section id="tab-clients" class="tab-content hidden space-y-6">
                 <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
                     <div>
@@ -555,7 +551,7 @@
                 </div>
             </section>
 
-            <!-- TAB 6: ENCARGOS -->
+            <!-- TAB 7: ENCARGOS -->
             <section id="tab-orders" class="tab-content hidden space-y-6">
                 <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
                     <div>
@@ -568,45 +564,6 @@
                 </div>
 
                 <div id="orders-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
-            </section>
-
-            <!-- TAB 7: FINANZAS -->
-            <section id="tab-finance" class="tab-content hidden space-y-6">
-                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
-                    <div>
-                        <h2 class="text-lg sm:text-xl font-bold">Gestión Financiera & Gastos</h2>
-                        <p class="text-xs text-gray-400">Control de ingresos, egresos y retiros personales</p>
-                    </div>
-                    <div class="flex flex-wrap gap-2 w-full sm:w-auto">
-                        <button onclick="openFinanceModal('Ingreso')" class="flex-1 sm:flex-none px-3 py-2 bg-green-600 text-white text-xs font-bold rounded-xl hover:bg-green-500">
-                            + Ingreso
-                        </button>
-                        <button onclick="openFinanceModal('Egreso')" class="flex-1 sm:flex-none px-3 py-2 bg-red-600 text-white text-xs font-bold rounded-xl hover:bg-red-500">
-                            - Egreso
-                        </button>
-                        <button onclick="openFinanceModal('Tinto')" class="flex-1 sm:flex-none px-3 py-2 bg-amber-600 text-white text-xs font-bold rounded-xl hover:bg-amber-500">
-                            ☕ Tinto
-                        </button>
-                    </div>
-                </div>
-
-                <div class="glass-card rounded-3xl overflow-hidden border border-white/10">
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-left text-xs">
-                            <thead class="bg-black/60 text-gray-400 uppercase tracking-wider border-b border-white/10">
-                                <tr>
-                                    <th class="p-3 sm:p-4">Fecha</th>
-                                    <th class="p-3 sm:p-4">Tipo</th>
-                                    <th class="p-3 sm:p-4">Descripción</th>
-                                    <th class="p-3 sm:p-4">Cuenta</th>
-                                    <th class="p-3 sm:p-4">Monto</th>
-                                    <th class="p-3 sm:p-4 text-center">Acciones</th>
-                                </tr>
-                            </thead>
-                            <tbody id="finance-table-body" class="divide-y divide-white/5"></tbody>
-                        </table>
-                    </div>
-                </div>
             </section>
 
             <!-- TAB 8: IA ASISTENTE -->
@@ -737,7 +694,7 @@
             <input type="hidden" id="cf-mov-type">
             <div>
                 <label class="block text-xs text-gray-300 mb-1">Descripción / Concepto</label>
-                <input type="text" id="cf-mov-desc" class="w-full p-2.5 rounded-xl glass-input text-xs" placeholder="Ej: Venta extra, pago de servicio, etc.">
+                <input type="text" id="cf-mov-desc" class="w-full p-2.5 rounded-xl glass-input text-xs" placeholder="Ej: Pago de transporte, venta extra, tinto...">
             </div>
             <div>
                 <label class="block text-xs text-gray-300 mb-1">Monto ($)</label>
@@ -752,11 +709,12 @@
             </div>
             <div class="flex justify-end gap-2 pt-2">
                 <button onclick="closeCashFlowModal()" class="px-4 py-2 bg-gray-700 text-xs rounded-xl">Cancelar</button>
-                <button onclick="saveCashFlowMovement()" class="px-4 py-2 bg-brand-neon text-black text-xs font-bold rounded-xl">Guardar</button>
+                <button onclick="saveCashFlowMovement()" class="px-4 py-2 bg-brand-neon text-black text-xs font-bold rounded-xl">Guardar Movimiento</button>
             </div>
         </div>
     </div>
 
+    <!-- MODAL PRODUCTO -->
     <div id="modal-product" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
         <div class="glass-card w-full max-w-md p-6 rounded-3xl space-y-4">
             <h3 id="modal-product-title" class="font-bold text-base text-brand-neon">Agregar Prenda</h3>
@@ -796,6 +754,7 @@
         </div>
     </div>
 
+    <!-- MODAL CLIENTE -->
     <div id="modal-client" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
         <div class="glass-card w-full max-w-md p-6 rounded-3xl space-y-4">
             <h3 id="modal-client-title" class="font-bold text-base text-brand-neon">Registrar / Editar Cliente</h3>
@@ -825,6 +784,7 @@
         </div>
     </div>
 
+    <!-- MODAL ENCARGO -->
     <div id="modal-order" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
         <div class="glass-card w-full max-w-md p-6 rounded-3xl space-y-4">
             <h3 class="font-bold text-base text-brand-neon">Registrar Nuevo Encargo</h3>
@@ -853,34 +813,7 @@
         </div>
     </div>
 
-    <div id="modal-finance" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
-        <div class="glass-card w-full max-w-md p-6 rounded-3xl space-y-4">
-            <h3 id="finance-modal-title" class="font-bold text-base text-brand-neon">Movimiento Financiero</h3>
-            <input type="hidden" id="finance-type">
-            <div>
-                <label class="block text-xs text-gray-300 mb-1">Descripción</label>
-                <input type="text" id="finance-desc" class="w-full p-2.5 rounded-xl glass-input text-xs" placeholder="Ej: Pago de tinto, transporte...">
-            </div>
-            <div class="grid grid-cols-2 gap-2">
-                <div>
-                    <label class="block text-xs text-gray-300 mb-1">Monto ($)</label>
-                    <input type="number" id="finance-amount" class="w-full p-2.5 rounded-xl glass-input text-xs">
-                </div>
-                <div>
-                    <label class="block text-xs text-gray-300 mb-1">Cuenta</label>
-                    <select id="finance-account" class="w-full p-2.5 rounded-xl glass-input text-xs">
-                        <option value="Efectivo">Efectivo</option>
-                        <option value="Virtual">Virtual (Nequi/Banco)</option>
-                    </select>
-                </div>
-            </div>
-            <div class="flex justify-end gap-2 pt-2">
-                <button onclick="closeFinanceModal()" class="px-4 py-2 bg-gray-700 text-xs rounded-xl">Cancelar</button>
-                <button onclick="saveFinanceMovement()" class="px-4 py-2 bg-brand-neon text-black text-xs font-bold rounded-xl">Registrar</button>
-            </div>
-        </div>
-    </div>
-
+    <!-- MODAL FACTURA -->
     <div id="modal-receipt" class="fixed inset-0 z-50 hidden flex items-center justify-center p-3 sm:p-4 bg-black/90 backdrop-blur-md overflow-y-auto">
         <div class="w-full max-w-2xl my-4 sm:my-8 relative flex flex-col items-center">
             
@@ -960,7 +893,7 @@
 
     <!-- MAIN JAVASCRIPT LOGIC -->
     <script>
-        const DB_KEY = 'VALMY_STORE_DATABASE_V7';
+        const DB_KEY = 'VALMY_STORE_DATABASE_V8';
 
         let db = JSON.parse(localStorage.getItem(DB_KEY)) || {
             users: [
@@ -977,8 +910,7 @@
             ],
             sales: [],
             orders: [],
-            finance: [],
-            cashFlowLog: [] // Registro para el flujo de caja detallado
+            cashFlowLog: []
         };
 
         let currentUser = null;
@@ -1072,7 +1004,6 @@
             renderSalesLog();
             renderClientsTable();
             renderOrdersGrid();
-            renderFinanceTable();
             renderSettings();
         }
 
@@ -1086,23 +1017,27 @@
             document.getElementById('dash-capital-virtual').innerText = `$${baseVirt.toLocaleString()}`;
             document.getElementById('dash-capital-total').innerText = `$${(baseCash + baseVirt).toLocaleString()}`;
 
-            // Calcular Flujo de Caja en base a base + movimientos registrados + abonos/ventas pagadas - egresos
             let cashFlow = baseCash;
             let virtFlow = baseVirt;
             let pendingDebts = 0;
-            let weeklyRealProfit = 0; // Utilidad limpia cobrada (excluye fiados hasta que se abonen)
+            let weeklyRealProfit = 0; // Utilidad cobrada (sin contar fiado no pagado)
 
             db.sales.forEach(s => {
                 pendingDebts += s.debt;
                 
-                // Utilidad proporcional cobrada en función del porcentaje pagado de la venta
+                // Distribución de lo pagado en cuentas
+                if (s.paymentMethod === 'Efectivo') cashFlow += s.paid;
+                else if (s.paymentMethod === 'Virtual') virtFlow += s.paid;
+                else if (s.paymentMethod === 'Fiado') cashFlow += s.paid;
+
+                // Meta semanal basada proporcionalmente solo en lo pagado
                 if (s.total > 0) {
                     const proportionPaid = s.paid / s.total;
                     weeklyRealProfit += (s.netProfit * proportionPaid);
                 }
             });
 
-            // Sumar/restar movimientos adicionales de flujo de caja y finanzas
+            // Ajustar con movimientos adicionales de flujo de caja
             db.cashFlowLog.forEach(m => {
                 if (m.type === 'Ingreso') {
                     if (m.account === 'Efectivo') cashFlow += m.amount;
@@ -1110,16 +1045,6 @@
                 } else if (m.type === 'Egreso') {
                     if (m.account === 'Efectivo') cashFlow -= m.amount;
                     else virtFlow -= m.amount;
-                }
-            });
-
-            db.finance.forEach(f => {
-                if (f.type === 'Ingreso') {
-                    if (f.account === 'Efectivo') cashFlow += f.amount;
-                    else virtFlow += f.amount;
-                } else {
-                    if (f.account === 'Efectivo') cashFlow -= f.amount;
-                    else virtFlow -= f.amount;
                 }
             });
 
@@ -1139,7 +1064,7 @@
 
             if (weeklyRealProfit <= 0) {
                 titleEl.innerText = "¡Qué más Valmy! 🐱 Te faltan $395.000 COP cobrados, ¡ánimo! 🔥";
-                subEl.innerHTML = `Los fiados no suman a la meta hasta que sean pagados.`;
+                subEl.innerHTML = `Las ventas fiadas entran a la meta una vez que el cliente abone o pague.`;
             } else if (diff > 0) {
                 titleEl.innerText = `¡Qué más Valmy! Te faltan $${Math.round(diff).toLocaleString()} COP, ¡ánimo! 🔥`;
                 subEl.innerHTML = `Llevas cobrados <b>$${Math.round(weeklyRealProfit).toLocaleString()} COP</b> de utilidad real.`;
@@ -1194,7 +1119,7 @@
             }
         }
 
-        // PESTAÑA Y LÓGICA DE FLUJO DE CAJA
+        // FLUJO DE CAJA
         function renderCashFlow() {
             let cash = db.capitalBase.cash || 0;
             let virtual = db.capitalBase.virtual || 0;
@@ -1202,7 +1127,7 @@
             db.sales.forEach(s => {
                 if (s.paymentMethod === 'Efectivo') cash += s.paid;
                 else if (s.paymentMethod === 'Virtual') virtual += s.paid;
-                else if (s.paymentMethod === 'Fiado') cash += s.paid; // si hubo abono inicial en efectivo
+                else if (s.paymentMethod === 'Fiado') cash += s.paid;
             });
 
             db.cashFlowLog.forEach(m => {
@@ -1215,23 +1140,12 @@
                 }
             });
 
-            db.finance.forEach(f => {
-                if (f.type === 'Ingreso') {
-                    if (f.account === 'Efectivo') cash += f.amount;
-                    else virtual += f.amount;
-                } else {
-                    if (f.account === 'Efectivo') cash -= f.amount;
-                    else virtual -= f.amount;
-                }
-            });
-
-            document.getElementById('cf-total-cash`').innerText = `$${cash.toLocaleString()}`;
+            document.getElementById('cf-total-cash').innerText = `$${cash.toLocaleString()}`;
             document.getElementById('cf-total-virtual').innerText = `$${virtual.toLocaleString()}`;
 
             const tbody = document.getElementById('cashflow-table-body');
             tbody.innerHTML = '';
 
-            // Combinar ventas y movimientos de caja en una lista cronológica
             let combined = [];
             db.sales.forEach(s => {
                 if (s.paid > 0) {
@@ -1246,7 +1160,6 @@
             });
 
             db.cashFlowLog.forEach(m => combined.push(m));
-            db.finance.forEach(f => combined.push(f));
 
             if (combined.length === 0) {
                 tbody.innerHTML = '<tr><td colspan="5" class="p-4 text-center text-gray-500 italic">No hay movimientos registrados en caja.</td></tr>';
@@ -1260,7 +1173,7 @@
                     <tr class="hover:bg-white/5">
                         <td class="p-3 text-gray-300">${item.date}</td>
                         <td class="p-3 font-bold ${item.type === 'Ingreso' || item.type === 'Venta / Abono' ? 'text-green-400' : 'text-red-400'}">${item.type}</td>
-                        <td class="p-3 text-white">${item.desc || item.description}</td>
+                        <td class="p-3 text-white">${item.desc}</td>
                         <td class="p-3 text-gray-300">${item.account}</td>
                         <td class="p-3 font-bold text-white">$${item.amount.toLocaleString()}</td>
                     </tr>
@@ -1301,7 +1214,7 @@
             saveDB();
         }
 
-        // GESTIÓN DE ABONOS A DEUDAS
+        // ABONOS
         function openPayDebtModal(saleId) {
             const sale = db.sales.find(s => s.id === saleId);
             if (!sale) return;
@@ -1331,12 +1244,11 @@
             sale.paid += amount;
             sale.debt -= amount;
 
-            // Registrar también en el flujo de caja como ingreso por abono de deuda
             db.cashFlowLog.unshift({
                 id: Date.now(),
                 date: new Date().toISOString().split('T')[0],
                 type: 'Ingreso',
-                desc: `Abono de deuda - Factura #${sale.id} (${sale.customerName})`,
+                desc: `Abono Deuda Factura #${sale.id} (${sale.customerName})`,
                 account,
                 amount
             });
@@ -1347,9 +1259,9 @@
 
         function sendDebtCollectionMsg(name, phone, debt, days) {
             let msg = `Hola ${name}, ¿cómo estás? 👋🐱\n\n`;
-            msg += `Paso a recordarte que llevas *${days} días* desde que sacaste esta prenda fiada en Valmy Store.\n\n`;
+            msg += `Paso a recordarte que llevas *${days} días* desde que sacaste tu prenda fiada en Valmy Store.\n\n`;
             msg += `Tu saldo pendiente actual es de *$${debt.toLocaleString()} COP*.\n\n`;
-            msg += `Quedo atento a tu pago para ponernos al día. ¡Muchas gracias! 🔥`;
+            msg += `Quedo atento a tu abono o pago para actualizar tu saldo. ¡Muchas gracias! 🔥`;
 
             const cleanPhone = phone.replace(/[^0-9]/g, '');
             window.open(`https://wa.me/${cleanPhone}?text=${encodeURIComponent(msg)}`, '_blank');
@@ -1874,7 +1786,7 @@
             }
         }
 
-        // VENTAS
+        // VENTAS LOG
         function renderSalesLog() {
             const tbody = document.getElementById('sales-log-table-body');
             tbody.innerHTML = '';
@@ -1995,72 +1907,6 @@
         function deleteOrder(id) {
             if (confirm('¿Eliminar este encargo?')) {
                 db.orders = db.orders.filter(o => o.id !== id);
-                saveDB();
-            }
-        }
-
-        // FINANZAS
-        function renderFinanceTable() {
-            const tbody = document.getElementById('finance-table-body');
-            tbody.innerHTML = '';
-
-            if (db.finance.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="6" class="p-4 text-center text-xs text-gray-500 italic">No hay movimientos financieros registrados.</td></tr>';
-                return;
-            }
-
-            db.finance.forEach(f => {
-                tbody.innerHTML += `
-                    <tr class="hover:bg-white/5 transition-colors">
-                        <td class="p-3 sm:p-4 text-gray-300">${f.date}</td>
-                        <td class="p-3 sm:p-4 font-bold ${f.type === 'Ingreso' ? 'text-green-400' : (f.type === 'Tinto' ? 'text-amber-400' : 'text-red-400')}">${f.type}</td>
-                        <td class="p-3 sm:p-4 text-white">${f.description}</td>
-                        <td class="p-3 sm:p-4 text-gray-300">${f.account}</td>
-                        <td class="p-3 sm:p-4 font-bold text-white">$${f.amount.toLocaleString()}</td>
-                        <td class="p-3 sm:p-4 text-center">
-                            <button onclick="deleteFinance(${f.id})" class="text-red-400 hover:text-white"><i class="fa-solid fa-trash"></i></button>
-                        </td>
-                    </tr>
-                `;
-            });
-        }
-
-        function openFinanceModal(type) {
-            document.getElementById('finance-type').value = type;
-            document.getElementById('finance-modal-title').innerText = `Registrar ${type}`;
-            document.getElementById('finance-desc').value = type === 'Tinto' ? 'Tinto / Personal del Dueño' : '';
-            document.getElementById('finance-amount').value = '';
-            document.getElementById('modal-finance').classList.remove('hidden');
-        }
-
-        function closeFinanceModal() {
-            document.getElementById('modal-finance').classList.add('hidden');
-        }
-
-        function saveFinanceMovement() {
-            const type = document.getElementById('finance-type').value;
-            const description = document.getElementById('finance-desc').value.trim();
-            const amount = parseFloat(document.getElementById('finance-amount').value) || 0;
-            const account = document.getElementById('finance-account').value;
-
-            if (!description || amount <= 0) return alert('Por favor ingresa una descripción y un monto válido.');
-
-            db.finance.unshift({
-                id: Date.now(),
-                date: new Date().toISOString().split('T')[0],
-                type,
-                description,
-                amount,
-                account
-            });
-
-            closeFinanceModal();
-            saveDB();
-        }
-
-        function deleteFinance(id) {
-            if (confirm('¿Eliminar este movimiento financiero?')) {
-                db.finance = db.finance.filter(x => x.id !== id);
                 saveDB();
             }
         }
