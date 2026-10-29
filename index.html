@@ -87,6 +87,12 @@
             box-shadow: 0 0 25px rgba(77, 35, 104, 0.5);
         }
 
+        .debt-critical {
+            background: rgba(239, 68, 68, 0.15) !important;
+            border: 2px solid #ef4444 !important;
+            box-shadow: 0 0 15px rgba(239, 68, 68, 0.4) !important;
+        }
+
         ::-webkit-scrollbar {
             width: 6px;
             height: 6px;
@@ -900,13 +906,12 @@
         </div>
     </div>
 
-    <!-- FIREBASE SDKs (Compatibles con Firestore en la Nube) -->
+    <!-- FIREBASE SDKs -->
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 
     <!-- MAIN JAVASCRIPT LOGIC CON FIREBASE -->
     <script>
-        // Configuración oficial de Firebase para Valmy Store
         const firebaseConfig = {
             apiKey: "AIzaSyCMr4tb741oYtdH9HkVf6q4TocqeXFNqc0",
             authDomain: "valmy-stores.firebaseapp.com",
@@ -916,7 +921,6 @@
             appId: "1:103810557744:web:e12f79ca5795d858ab8af5"
         };
 
-        // Inicializar Firebase
         firebase.initializeApp(firebaseConfig);
         const dbCloud = firebase.firestore();
 
@@ -937,7 +941,6 @@
         let posCart = [];
         let currentReceiptSale = null;
 
-        // Cargar datos en tiempo real desde Firestore
         function initFirebaseSync() {
             dbCloud.collection('valmy_store').doc('main_data').onSnapshot((doc) => {
                 if (doc.exists) {
@@ -952,7 +955,6 @@
                     db.cashFlowLog = data.cashFlowLog || [];
                     refreshUI();
                 } else {
-                    // Si está vacío por primera vez, guardar datos iniciales
                     saveDB();
                 }
             }, (error) => {
@@ -1055,7 +1057,7 @@
             renderSettings();
         }
 
-        // CÁLCULO DE FLUJO DE CAJA Y META SEMANAL
+        // CÁLCULO DE FLUJO DE CAJA Y META SEMANAL REAL
         function renderDashboard() {
             if (currentUser && currentUser.role === 'Colaborador') return;
 
@@ -1068,7 +1070,7 @@
             let cashFlow = baseCash;
             let virtFlow = baseVirt;
             let pendingDebts = 0;
-            let weeklyRealProfit = 0;
+            let weeklyRealProfit = 0; // Solo dinero efectivamente cobrado
 
             db.sales.forEach(s => {
                 pendingDebts += s.debt;
@@ -1077,8 +1079,9 @@
                 else if (s.paymentMethod === 'Virtual') virtFlow += s.paid;
                 else if (s.paymentMethod === 'Fiado') cashFlow += s.paid;
 
-                if (s.total > 0) {
-                    const proportionPaid = s.paid / s.total;
+                // Solo la proporción PAGADA/COBRADA suma a la utilidad real para la meta
+                if (s.total > 0 && s.paid > 0) {
+                    const proportionPaid = Math.min(1, s.paid / s.total);
                     weeklyRealProfit += (s.netProfit * proportionPaid);
                 }
             });
@@ -1111,31 +1114,40 @@
                 titleEl.innerText = "¡Qué más Valmy! 🐱 Te faltan $395.000 COP cobrados, ¡ánimo! 🔥";
                 subEl.innerHTML = `Las ventas fiadas entran a la meta una vez que el cliente abone o pague.`;
             } else if (diff > 0) {
-                titleEl.innerText = `¡Qué más Valmy! Te faltan $${Math.round(diff).toLocaleString()} COP, ¡ánimo! 🔥`;
-                subEl.innerHTML = `Llevas cobrados <b>$${Math.round(weeklyRealProfit).toLocaleString()} COP</b> de utilidad real.`;
+                titleEl.innerText = `¡Qué más Valmy! Te faltan $${Math.round(diff).toLocaleString()} COP cobrados, ¡ánimo! 🔥`;
+                subEl.innerHTML = `Llevas cobrados <b>$${Math.round(weeklyRealProfit).toLocaleString()} COP</b> de utilidad real en caja.`;
             } else {
                 titleEl.innerText = "¡Uff Valmy, la rompiste toda esta semana con los cobros! 🎉🐱";
-                subEl.innerHTML = `Superaste la meta con <b>$${Math.round(weeklyRealProfit).toLocaleString()} COP</b> de utilidad real.`;
+                subEl.innerHTML = `Superaste la meta con <b>$${Math.round(weeklyRealProfit).toLocaleString()} COP</b> de utilidad real cobrada.`;
             }
 
+            // CARTERA PENDIENTE CON ALERTA ROJA +30 DÍAS
             const debtorsDiv = document.getElementById('dashboard-debtors-list');
             debtorsDiv.innerHTML = '';
             const debtors = db.sales.filter(s => s.debt > 0);
+
             if (debtors.length === 0) {
                 debtorsDiv.innerHTML = '<div class="text-xs text-gray-500 italic">No hay deudas pendientes.</div>';
             } else {
                 debtors.forEach(d => {
                     const days = calculateDaysElapsed(d.date);
+                    const isCritical = days >= 30;
+
                     debtorsDiv.innerHTML += `
-                        <div class="flex flex-col sm:flex-row sm:items-center justify-between p-3 rounded-2xl bg-black/40 border border-red-500/20 text-xs gap-2">
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between p-3 rounded-2xl ${isCritical ? 'debt-critical' : 'bg-black/40 border border-red-500/20'} text-xs gap-2 transition-all">
                             <div>
-                                <div class="font-bold text-white text-sm">${d.customerName}</div>
+                                <div class="font-bold ${isCritical ? 'text-red-300' : 'text-white'} text-sm flex items-center gap-2">
+                                    ${d.customerName}
+                                    ${isCritical ? '<span class="px-2 py-0.5 bg-red-600 text-white font-extrabold text-[9px] rounded-full uppercase animate-pulse">⚠️ +30 Días Mora</span>' : ''}
+                                </div>
                                 <div class="text-[10px] text-gray-400">Factura #${d.id} • Tel: ${d.customerPhone}</div>
-                                <div class="text-[10px] font-bold text-yellow-400 mt-0.5">⏱️ Días fiado: ${days} días | Pendiente: $${d.debt.toLocaleString()}</div>
+                                <div class="text-[10px] font-bold ${isCritical ? 'text-red-400 font-extrabold' : 'text-yellow-400'} mt-0.5">
+                                    ⏱️ Días fiado: ${days} días | Pendiente: $${d.debt.toLocaleString()}
+                                </div>
                             </div>
                             <div class="flex gap-1 items-center">
                                 <button onclick="openPayDebtModal(${d.id})" class="px-2 py-1 bg-green-600 hover:bg-green-500 text-white font-bold rounded-lg text-[10px]">Abonar</button>
-                                <button onclick="sendDebtCollectionMsg('${d.customerName}', '${d.customerPhone}', ${d.debt}, ${days})" class="px-2.5 py-1 bg-red-600 hover:bg-red-500 text-white font-extrabold rounded-lg text-[10px] flex items-center gap-1">
+                                <button onclick="sendDebtCollectionMsg('${d.customerName}', '${d.customerPhone}', ${d.debt}, ${days})" class="px-2.5 py-1 ${isCritical ? 'bg-red-700 hover:bg-red-600' : 'bg-red-600 hover:bg-red-500'} text-white font-extrabold rounded-lg text-[10px] flex items-center gap-1">
                                     <i class="fa-brands fa-whatsapp"></i> Cobrar
                                 </button>
                             </div>
@@ -1392,7 +1404,11 @@
 
         function sendDebtCollectionMsg(name, phone, debt, days) {
             let msg = `Hola ${name}, ¿cómo estás? 👋🐱\n\n`;
-            msg += `Paso a recordarte que llevas *${days} días* desde que sacaste tu prenda fiada en Valmy Store.\n\n`;
+            if (days >= 30) {
+                msg += `Paso a comunicarte que llevas *${days} días de mora* con tu prenda fiada en Valmy Store.\n\n`;
+            } else {
+                msg += `Paso a recordarte que llevas *${days} días* desde que sacaste tu prenda fiada en Valmy Store.\n\n`;
+            }
             msg += `Tu saldo pendiente actual es de *$${debt.toLocaleString()} COP*.\n\n`;
             msg += `Quedo atento a tu abono o pago para actualizar tu saldo. ¡Muchas gracias! 🔥`;
 
@@ -2072,8 +2088,8 @@
             let response = greeting;
             let weeklyRealProfit = 0;
             db.sales.forEach(s => {
-                if (s.total > 0) {
-                    weeklyRealProfit += (s.netProfit * (s.paid / s.total));
+                if (s.total > 0 && s.paid > 0) {
+                    weeklyRealProfit += (s.netProfit * Math.min(1, s.paid / s.total));
                 }
             });
 
@@ -2171,7 +2187,6 @@
             saveDB();
         }
 
-        // Iniciar la sincronización con Firebase al cargar la página
         window.onload = function() {
             initFirebaseSync();
         };
