@@ -4,6 +4,22 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Valmy Store - Control Financiero Urbano</title>
+
+    <!-- FAVICON & OPEN GRAPH (VISTA PREVIA CON LOGO EN WHATSAPP Y REDES) -->
+    <link rel="icon" type="image/png" href="https://jeanpierrmorales69-beep.github.io/Valmy-store/logo.png">
+    <link rel="apple-touch-icon" href="https://jeanpierrmorales69-beep.github.io/Valmy-store/logo.png">
+
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Valmy Store - Control Financiero Urbano">
+    <meta property="og:description" content="Plataforma de gestión de inventario, ventas, fiados y flujo de caja para Valmy Store.">
+    <meta property="og:image" content="https://jeanpierrmorales69-beep.github.io/Valmy-store/logo.png">
+    <meta property="og:url" content="https://jeanpierrmorales69-beep.github.io/Valmy-store/">
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Valmy Store - Control Financiero Urbano">
+    <meta name="twitter:description" content="Plataforma de gestión de inventario, ventas, fiados y flujo de caja para Valmy Store.">
+    <meta name="twitter:image" content="https://jeanpierrmorales69-beep.github.io/Valmy-store/logo.png">
+
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -1658,7 +1674,7 @@
         }
 
         function processPosSale() {
-            if (posCart.length === 0) return alert('El carrito está vacío.');
+            if (posCart.length === 0) return alert('El carrito está vacío. Agrega al menos una prenda para registrar la venta.');
 
             let custName = '';
             let custPhone = '';
@@ -2141,6 +2157,7 @@
             const catsDiv = document.getElementById('settings-categories-list');
             catsDiv.innerHTML = '';
             db.categories.forEach(c => {
+                catsDiv.json;
                 catsDiv.innerHTML += `
                     <span class="px-3 py-1 bg-brand-dark border border-brand-neon/30 rounded-xl text-xs text-brand-neon flex items-center gap-2">
                         ${c}
